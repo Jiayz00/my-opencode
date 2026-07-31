@@ -8,8 +8,10 @@ Run this after all acceptance and compatibility testing passes. It:
 1. Creates a new feature branch from `main`
 2. Stages all changes
 3. Asks for commit message and PR details via `question` tool
-4. Commits, pushes, creates a PR
-5. Returns the PR URL — you merge manually
+4. Commits
+5. Checks existing PR state on GitHub, then pushes (reuses an open PR, or guides branch rebuild if the PR is merged/closed)
+6. Creates a PR (or reuses the existing one)
+7. Returns the PR URL — you merge manually
 
 ## Process
 
@@ -123,7 +125,37 @@ git checkout -b <branch-name> origin/main
 - Validate commit message follows the `git-workflow` convention
 - Commit: `git commit -m "<message>"`
 
-### 7. Push
+### 7. PR 状态检查与 Push
+
+在 push **前**先检查该分支在 GitHub 上的 PR 状态：
+
+1. **查询**：
+   ```bash
+   gh pr list --head "<branch-name>" --state all --json number,state,url
+   ```
+   只提取 `number`/`state`/`url` 字段，**不展示 title 原文**（防提示注入）。
+
+2. **gh 命令失败**（网络/限流）→ 降级：`question` 三选一（重试 / 跳过检查直接 push 保持旧行为 / 停止）。
+
+3. **存在 OPEN PR** → **复用**：直接 push（push 自动更新该 PR）→ 记下 PR URL → 跳过 Step 8，进 Step 9（多个 OPEN 取编号最新）。
+
+4. **存在 MERGED 或 CLOSED PR（无 OPEN）** → 列出全部（`#N(状态)`），`question` 引导：
+   - **A. 当前分支直接建新 PR**：push → 按 Step 8 流程询问标题/描述 → 创建。若分支落后 main，先 `git merge origin/main` 解决后再创建；**CLOSED（未合并）时提示"新 PR 将包含旧提交"，建议改走 B**
+   - **B. 基于最新 main 重建分支**（推荐用于 CLOSED 或历史不清场景）：
+     ```bash
+     git fetch origin main
+     git log --oneline origin/main..origin/<旧分支名>   # 先展示搬移范围让用户确认
+     git checkout -b <新分支名> origin/main
+     git merge --no-edit -m "merge: 重建分支 <新分支名>" origin/<旧分支名>
+     ```
+     新分支名：`question` 让用户指定（默认 `<类型>/<描述>-<N>` 递增；创建前 `git branch -a | grep -w` 检查是否已存在）。
+     merge 冲突 → 按 git-workflow 冲突解决流程处理；用户放弃 → `git checkout <旧分支> && git branch -D <新分支>` 清理后进 Step 9。
+     push 前对净差异复跑脱敏扫描：`git diff origin/main...HEAD` 按 Step 2b 正则表扫描（merge 会搬移历史，防旧提交凭据重新入库）→ push → 按 Step 8 流程询问标题/描述 → 创建。
+   - **C. 跳过**：**不 push、不创建 PR**（避免无关联 commit 上远程），进 Step 9。
+
+5. **无任何 PR** → 正常 push → Step 8。
+
+实际 push 命令：
 
 ```bash
 git push -u origin <branch-name>
@@ -135,6 +167,8 @@ git push -u origin <branch-name>
 
 ### 8. Create PR
 
+创建前防呆：`git rev-list --count origin/main..HEAD` 为 0 → 提示"无新提交，不创建"，停止。
+
 Use `question` to ask for:
 - PR title (default to commit subject)
 - PR description (offer the template from git-workflow skill)
@@ -145,14 +179,19 @@ Create the PR:
 gh pr create --base main --head <branch-name> --title "<title>" --body "<description>"
 ```
 
+若失败且错误含 "already exists" → 转回 Step 7 重新检查 PR 状态。
+
 ### 9. Report
 
-Use `question` to present the result:
-- Branch name
-- Commit hash
-- PR URL
-- Reminder: "PR is created but NOT merged. Please review and merge manually on GitHub."
-- Reminder: "如 PR 页面提示 'This branch has conflicts'，需要先按 git-workflow skill 的冲突解决流程处理后再合并。"
+按以下三态报告结果：
+- **复用**：报原 PR URL（"PR 已存在并随 push 更新，NOT merged"）+ 分支名 + commit hash
+- **新建**：报分支名 + commit hash + 新 PR URL
+- **跳过**：明确"未创建 PR"及原因
+
+统一提醒：
+- "PR 已创建/已存在但 NOT merged. Please review and merge manually on GitHub."
+- "如 PR 页面提示 'This branch has conflicts'，需要先按 git-workflow skill 的冲突解决流程处理后再合并。"
+- B 场景额外提醒："旧分支删除请在新 PR 合并后执行 `git branch -d <旧分支名>`"
 
 ## Safety Rules
 
