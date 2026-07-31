@@ -2,36 +2,6 @@
   "$schema": "https://opencode.ai/config.json",
   "instructions": ["AGENTS.md"],
   "permission": {
-    "question": "allow",
-    "skill": {
-      "vibe-core": "allow",
-      "acceptance-frontend": "allow",
-      "acceptance-fullstack": "allow",
-      "architecture": "allow",
-      "bugfix": "allow",
-      "ci-cd": "allow",
-      "code-review": "allow",
-      "compatibility-test": "allow",
-      "database-change": "allow",
-      "dependency-update": "allow",
-      "docs": "allow",
-      "feature-dev-backend": "allow",
-      "feature-dev-frontend": "allow",
-      "feature-dev-fullstack": "allow",
-      "git-workflow": "allow",
-      "hotfix": "allow",
-      "integration": "allow",
-      "migration": "allow",
-      "optimization-backend": "allow",
-      "optimization-frontend": "allow",
-      "project-init": "allow",
-      "prototype": "allow",
-      "refactoring": "allow",
-      "security-audit": "allow",
-      "review-frontend-arch": "allow",
-      "review-backend-arch": "allow",
-      "review-devops": "allow",
-      "review-qa": "allow"
-    }
+    "question": "allow"
   }
 }
