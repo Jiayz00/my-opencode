@@ -1,0 +1,25 @@
+{
+  "permission": {
+    "question": "allow",
+    "skill": {
+      "vibe-core": "allow",
+      "integration-philosophy": "allow",
+      "feature-dev-integration": "allow",
+      "api-contract-integration": "allow",
+      "acceptance-fullstack": "allow",
+      "compatibility-test": "allow",
+      "dependency-update": "allow",
+      "refactoring": "allow",
+      "bugfix": "allow",
+      "code-review": "allow",
+      "review-frontend-arch": "allow",
+      "review-backend-arch": "allow",
+      "review-devops": "allow",
+      "review-qa": "allow",
+      "security-audit": "allow",
+      "ci-cd": "allow",
+      "git-workflow": "allow",
+      "docs": "allow"
+    }
+  }
+}
