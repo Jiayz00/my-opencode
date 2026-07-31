@@ -10,9 +10,10 @@
 # 1. 克隆仓库
 git clone <repo-url> ~/opencode-vibe
 
-# 2. 将 skills 和 commands 部署到全局 opencode 配置
+# 2. 将 skills、commands 和流程文档部署到全局 opencode 配置
 xcopy ~/opencode-vibe/.opencode/skills %USERPROFILE%\.config\opencode\skills\ /E /I /Y
 xcopy ~/opencode-vibe/.opencode/commands %USERPROFILE%\.config\opencode\commands\ /E /I /Y
+xcopy ~/opencode-vibe/.opencode/docs %USERPROFILE%\.config\opencode\docs\ /E /I /Y
 copy ~/opencode-vibe/AGENTS.md %USERPROFILE%\.config\opencode\AGENTS.md /Y
 
 # 3. 合并权限配置（重要）：opencode.json 的 permission.skill 放行列表需要合并到全局配置，
@@ -81,6 +82,7 @@ Step 6  兼容性测试         全栈回归，发现问题回 Step 2
     │                              security-audit, dependency-update,
     │                              prototype, project-init, compatibility-test
     ├── commands/                命令（/vibe、/vibe-init、/pr、/release，全局同源）
+    ├── docs/                    流程文档（命令骨架的读取目标：*-flow.md，全局同源）
     └── prompts/                 自定义提示词（可选）
 ```
 
