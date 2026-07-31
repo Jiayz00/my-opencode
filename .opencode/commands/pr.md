@@ -113,6 +113,8 @@ git fetch origin main
 git checkout -b <branch-name> origin/main
 ```
 
+任意 git 网络操作失败（`Failed to connect` / `Could not connect` / `Connection timed out`）→ 按 `git-workflow` skill 的网络故障处理流程处理。
+
 ### 6. Stage and Commit
 
 - Stage all changes: `git add -A`
@@ -127,7 +129,9 @@ git checkout -b <branch-name> origin/main
 git push -u origin <branch-name>
 ```
 
-如果失败且报网络错误（`Failed to connect` / `Could not connect`）：按 `git-workflow` skill 的网络故障处理流程处理（先查 AGENTS.md 有无代理端口 → 没有则问用户 → 成功则写入 AGENTS.md 持久化）。
+如果失败且报网络错误（`Failed to connect` / `Could not connect` / `Connection timed out`）：按 `git-workflow` skill 的网络故障处理流程处理（remote 协议检查 → 读 AGENTS.md 端口 → gh 两级分诊 → 系统代理检测 → URL 级 git 代理配置 → 验证 → 持久化）。
+
+注意：gh 已认证/可用不代表 git 网络通（两者网络栈独立），push 失败优先检查 git 代理配置。
 
 ### 8. Create PR
 

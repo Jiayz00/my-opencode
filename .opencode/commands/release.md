@@ -26,7 +26,7 @@ description: 发布新版本。从 main 创建 release 分支，更新版本号�
 - [ ] `gh` 已安装并认证（`gh auth status`）
 - [ ] 工作区无未提交改动（`git status --porcelain`，**先于分支检查**）
 - [ ] 当前在 `main` 分支（`git branch --show-current`；不在则先切回并确认）
-- [ ] main 与远程同步（`git fetch origin && git status -sb`；behind → `git pull --ff-only origin main`，冲突则停止报告）
+- [ ] main 与远程同步（`git fetch origin && git status -sb`；behind → `git pull --ff-only origin main`，冲突则停止报告；任意 git 网络操作失败 → 按 git-workflow 网络故障处理流程处理）
 - [ ] 探测是否有上一个 tag：`git tag --sort=-v:refname | head -1`
   - 有 → 记录为 `<上一个tag>`
   - 无 → 标记"首次发布"，后续步骤跳过 tag 对比
@@ -109,7 +109,7 @@ git tag -a vX.Y.Z -m "release: vX.Y.Z"
 git push origin vX.Y.Z
 ```
 
-- push 失败且报网络错误（`Failed to connect` / `Could not connect`）：按 `git-workflow` skill 的网络故障处理流程处理（先查 AGENTS.md 有无代理端口 → 没有则问用户 → 成功则写入 AGENTS.md 持久化）
+- push 失败且报网络错误（`Failed to connect` / `Could not connect` / `Connection timed out`）：按 `git-workflow` skill 的网络故障处理流程处理（remote 协议检查 → 读 AGENTS.md 端口 → gh 两级分诊 → 系统代理检测 → URL 级 git 代理配置 → 验证 → 持久化）；gh 已认证不代表 git 网络通
 - push 失败（其他原因）：**停止**，报告"tag 已打/未推"状态，不得进入下一步
 
 ### 6. 合并回 main
@@ -132,7 +132,7 @@ git push origin main
 - push 被拒：
   - 远程 main 有他人提交 → 停止并报告，不得 force push
   - 分支保护规则拦截 → 请用户临时关闭该规则（含 "Do not allow bypass"）或由管理员放行，push 成功后恢复
-- push 网络失败 → 按 git-workflow 网络故障处理流程处理
+- push 网络失败 → 按 git-workflow 网络故障处理流程处理（gh 已认证不代表 git 网络通，优先检查 git 代理配置）
 - **校验远程同步**：`git status -sb` 应显示与 `origin/main` 同步
 - **合并后验证**：等待 CI 对 main 的检查通过（本仓库无 CI 则运行测试命令）；失败 → **停止**并报告，不得进入下一步
 

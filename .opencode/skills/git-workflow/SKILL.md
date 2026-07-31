@@ -256,22 +256,36 @@ fix: 修复登录页空邮箱崩溃
 
 ## 网络故障处理
 
-`git push` 因网络问题失败时，先检查 AGENTS.md 中是否已有 `代理端口` 配置，如有则直接使用：
+git 网络操作（push / fetch / pull / ls-remote）失败时，判定错误为网络问题（`Failed to connect` / `Could not connect` / `Connection timed out`）后，按以下顺序处理。前提：HTTPS remote（`https://github.com/...`）；SSH remote 走 `~/.ssh/config` 的 ProxyCommand，本流程不适用。
 
-```bash
-set HTTP_PROXY=http://127.0.0.1:<端口>
-set HTTPS_PROXY=http://127.0.0.1:<端口>
-git push
-```
+1. **remote 协议检查**：`git remote get-url origin` 为 `ssh://` 或 `git@` 风格 → 提示改用 HTTPS remote（`git remote set-url origin https://github.com/<user>/<repo>.git`）或走 SSH 代理配置，不进入 http.proxy 流程（http.proxy 对 SSH 无效）
+2. **快路径**：读 AGENTS.md"网络"节的 `代理端口` → 有 → 用其配置并验证（第 6-7 步）；验证失败 → 回落到完整流程（第 3-7 步）
+3. **gh 两级分诊**（gh 与 git 网络栈独立，gh 通不代表 git 通；gh 认证与网络通路是两件事）：
+   - `gh auth status`：未认证/凭据失效 → 引导 `gh auth login`，**这是认证问题，不是网络问题**
+   - `gh api rate_limit --jq .rate.remaining`：失败 → 整个网络不通 → 转第 5 步问用户；通 → 问题在 git 层 → 继续检测
+   - gh 未安装（command not found）→ 提示安装或跳过
+4. **检测系统代理**（优先级：环境变量 > WinINET 注册表 > WinHTTP）：
+   - 环境变量：`env | grep -iE 'https?_proxy|all_proxy'`（含小写）
+   - Windows 注册表（WinINET，浏览器/gh 同源）：`reg query "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable` 为 1 时取 `/v ProxyServer`；值可能为 `host:port` 或 `http=host:port;https=host:port` 分段格式（取 http 段）；ProxyEnable=0 或 ProxyServer 空 → 无系统代理；PAC 模式 → 停止并报告无法自动处理
+   - WinHTTP 兜底：`netsh winhttp show proxy`
+   - macOS：`scutil --proxies`；Linux：环境变量
+5. **询问**：无代理信息 → `question` 询问端口（提示"回车跳过"）；检测到系统代理 → 用 `question` 展示完整代理地址请用户确认（默认拒绝自动改道，防误路由）
+6. **配置**（URL 级，仅影响 github.com 远程，不覆盖既有 http.proxy）：
+   - 写前留存旧值：`git config --global --get http.proxy`；旧值已存在 → 先验证旧值连通性，通则保留不覆盖
+   - `question` 确认后写入：
+     ```bash
+     git config --global http.https://github.com/.proxy http://<完整host:port>
+     ```
+   - 禁止在代理 URL 内嵌 `user:pass@` 凭据；需认证代理 → `git config --global http.proxyAuthMethod negotiate`（Windows 集成认证，不落盘密码）
+7. **验证**（分场景，与仓库解耦）：
+   - 无 origin remote 或非 git 仓库 → `curl.exe -x http://<host>:<port> -m 10 -sI https://github.com` 返回 200 即通过
+   - 有 origin remote → `git ls-remote origin HEAD`（Git Bash 下执行，`timeout 15` 包裹）
+   - 失败 → `question` 询问备选端口或跳过 → 重配置重验 → 仍失败才报告
+   - 失败回退：`git config --global --unset http.https://github.com/.proxy`（如本次写入过 authMethod 一并 `--unset http.proxyAuthMethod`）
+8. **持久化**：成功 → 更新 AGENTS.md"网络"节的 `代理端口`（默认项目 AGENTS.md，无则全局），注明"本机专用，换机器/系统代理变更需重新检测"；失败/跳过 → 报网络错误
+9. **逃生口**：仓库级 `git config --local http.proxy <url>` 可覆盖全局配置；不需要代理时 `git config --global --unset http.https://github.com/.proxy` 移除
 
-如果没有则用 `question` 询问：
-
-1. 检测错误是否为网络问题（`Failed to connect` / `Could not connect` / `Connection timed out`）
-2. 如果是，用 `question` 询问：
-   - "推送因网络问题失败。你用的代理端口是多少？（直接回车跳过不走代理）"
-3. 用户提供端口后设置环境变量重试
-4. **如果推送成功** → 将代理端口写入 AGENTS.md，下次自动使用
-5. 如果用户跳过或重试仍失败，报网络错误
+提交方式约定："用 gh 提交" = gh 认证 + git 跟随系统代理（URL 级配置），push 由 git 无参执行；gh 无 push 命令（gh 仅承担认证与 API 操作：PR/Release）。
 
 ## 安全加固
 
