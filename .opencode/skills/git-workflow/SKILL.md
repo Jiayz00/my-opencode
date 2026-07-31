@@ -208,7 +208,7 @@ fix: 修复登录页空邮箱崩溃
 
 ## 工作流自身文件的保护
 
-`.opencode/skills/**`、`.opencode/commands/**`、`AGENTS.md`、`opencode.json` 是工作流的可信指令来源，被所有会话自动加载。对这些文件的改动：
+`.opencode/skills/**`、`.opencode/commands/**`、`.opencode/docs/**`、`AGENTS.md`、`opencode.json` 是工作流的可信指令来源，被所有会话自动加载。对这些文件的改动：
 
 - 必须走 `code-review` 多角色评审（派发 5 角色子代理）
 - 必须遵守本 skill 的脱敏规则（防止注入恶意指令或凭据）
@@ -222,7 +222,7 @@ fix: 修复登录页空邮箱崩溃
 - 数据库迁移文件
 - 文档更新
 
-**禁止提交（`/pr` 命令会自动拦截以下内容）：**
+**禁止提交（脱敏扫描规则见 `.opencode/docs/pr-flow.md`，缺失则 `~/.config/opencode/docs/pr-flow.md`，Step 2）：**
 
 | 类别 | 示例 | 说明 |
 |------|------|------|
