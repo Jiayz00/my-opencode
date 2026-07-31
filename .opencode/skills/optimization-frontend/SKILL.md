@@ -1,62 +1,62 @@
 ---
 name: optimization-frontend
-description: Improve frontend performance or user experience. Measure-first approach with emphasis on Step 5 local acceptance.
+description: 改善前端性能或用户体验。先测量后优化，重点在于第 5 步的本地验收。
 ---
 
-# Frontend Optimization
+# 前端优化
 
-## Overview
+## 概述
 
-Optimization follows the 6-step workflow but with a stronger emphasis on Step 2 (baseline measurement) and Step 5 (local start + user verification). Never optimize without measuring first.
+优化遵循 6 步流程，但更强调第 2 步（基线测量）和第 5 步（本地启动 + 用户验证）。未经测量，绝不优化。
 
-## Step Adjustments
+## 步骤调整
 
-### Step 1 — Requirements Clarification
-Ask for:
-- What specifically needs to improve? (load time? interaction? bundle size?)
-- Current pain points and target metrics
-- Device/browser/network conditions to optimize for
-- Any constraints (must not break existing behavior)
+### 第 1 步 — 需求澄清
+询问：
+- 具体需要改善什么？（加载时间？交互？打包体积？）
+- 当前的痛点与目标指标
+- 需要优化的设备/浏览器/网络条件
+- 任何约束（不得破坏现有行为）
 
-### Step 2 — Spec & Plan
-- **Before anything:** Establish baseline metrics
-- Plan must include:
-  - Current measurement (with tools/numbers)
-  - Target measurement
-  - Optimization approach(es) to try
-  - How each approach will be validated
+### 第 2 步 — 规格与计划
+- **做任何事之前：** 建立基线指标
+- 计划必须包含：
+  - 当前测量值（附工具/数据）
+  - 目标测量值
+  - 要尝试的优化方案
+  - 每个方案如何验证
 
-### Step 3 — Permission Gate
-Present: "Baseline is [metric A: Xms]. Target is [metric A: <Yms]. Approach: [Z]. May I proceed?"
+### 第 3 步 — 权限门禁
+说明："基线为 [指标 A: Xms]。目标为 [指标 A: Yms]。方案：[Z]。是否可以继续？"
 
-### Step 4 — Development
-- Make ONE optimization at a time
-- After each: re-measure, compare to baseline
-- Revert optimizations that don't improve metrics
-- Document findings even for failed attempts
+### 第 4 步 — 开发
+- 一次只做**一个**优化
+- 每次优化后：重新测量，与基线对比
+- 回退未能改善指标的优化
+- 即使失败的尝试也要记录发现
 
-### Step 5 — Acceptance (Critical)
-1. Start local dev server
-2. Self-test all optimized paths
-3. Use `question` tool to present:
-   - Before/after metrics
-   - What changed
-   - Local URL for user verification
-4. Wait for user to accept via browser check
-5. If user requests changes → return to Step 1
+### 第 5 步 — 验收（关键）
+1. 启动本地开发服务器
+2. 自测所有优化路径
+3. 使用 `question` 工具呈现：
+   - 优化前/后指标
+   - 改了什么
+   - 供用户验证的本地 URL
+4. 等待用户通过浏览器检查确认
+5. 如果用户要求修改 → 回到第 1 步
 
-## Common Rationalizations
+## 常见借口
 
-| Rationalization | Reality |
-|----------------|---------|
-| "This optimization is obviously faster" | Obvious is not evidence. Measure before and after. |
-| "I'll optimize all the things at once" | One change at a time or you won't know what worked. |
-| "The metrics look good in my environment" | User verification is required. Their environment may differ. |
+| 借口 | 现实 |
+|------|------|
+| "这个优化显然更快" | 明显不是证据。测量前后对比。 |
+| "我一次性优化所有东西" | 一次只改一处，否则你不知道哪个有效。 |
+| "我的环境里指标看起来不错" | 必须由用户验证。他们的环境可能不同。 |
 
-## Verification
+## 验证清单
 
-- [ ] Baseline metrics recorded
-- [ ] Each optimization measured independently
-- [ ] Before/after comparison documented
-- [ ] No regressions in other areas
-- [ ] User accepted via local browser check
+- [ ] 基线指标已记录
+- [ ] 每项优化都独立测量
+- [ ] 优化前/后对比已记录
+- [ ] 其他领域无回退
+- [ ] 用户已通过本地浏览器检查确认

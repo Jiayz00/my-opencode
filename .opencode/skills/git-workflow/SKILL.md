@@ -43,6 +43,113 @@ refactor/xxx   → /pr → 合入 main
 
 分支名全小写，单词用连字符分隔。
 
+## 合并集成（多 PR 并发）
+
+多人并行开发时，两个 PR 各自测试通过、合并后却出问题，是因为合并后的代码从未被测试过。社区通行做法（GitHub Flow / trunk-based）：
+
+### 预防：频繁同步，小分支
+
+- **分支短命**：功能分支尽量 1-3 天合并，避免长期分叉
+- **定期同步**：开发期间定期把 main 合入自己的分支（不是 rebase——团队协作下 merge 更安全，不重写历史）
+  ```bash
+  git fetch origin main
+  git merge origin/main
+  git push origin <branch>
+  ```
+- **同步后必测**：merge main 进来后重新跑测试，发现问题当场解决
+- **提前建 Draft PR**：尽早暴露冲突，让协作者看到你的改动范围
+
+### 合入前：分支保持最新
+
+第二个合入的人负责同步——把更新后的 main 合进来，解决冲突后重测再合并：
+
+```bash
+git fetch origin main
+git merge origin/main    # 解决冲突
+npm test                 # 冲突解决后必须重测
+git push origin <branch>
+```
+
+### 冲突解决（PR 复检发现冲突时）
+
+PR 页面提示 "This branch has conflicts" 时，按冲突大小选择方式：
+
+**方式一：GitHub 网页直接解决（简单冲突）**
+
+点击 PR 页面 **Resolve conflicts** 按钮 → 网页编辑器里手动保留正确代码 → 点击 **Mark as resolved** → **Commit merge**。只适用于少量、单文件的简单冲突。
+
+**方式二：本地解决（推荐，所有冲突通用）**
+
+```bash
+# 1. 同步最新 main 到本地
+git fetch origin main
+
+# 2. 切到 PR 分支，合并 main（触发冲突标记）
+git checkout <branch>
+git merge origin/main
+
+# 3. 查看哪些文件冲突
+git status
+# 输出: both modified: src/xxx.ts
+
+# 4. 打开冲突文件，处理冲突标记
+# <<<<<<< HEAD          ← 当前分支（自己的改动）
+#     自己的代码
+# =======
+#     main 的代码
+# >>>>>>> origin/main   ← 对方的改动
+```
+
+处理规则：
+- 两边都要 → 手动合并两部分代码
+- 只要一边 → 删除另一边代码和标记
+- 都看不懂 → 停下，用 `question` 问用户或与协作者沟通
+- **禁止**：直接删掉整个冲突块、跳过不处理
+
+```bash
+# 5. 标记已解决（冲突文件都 add 之后）
+git add src/xxx.ts
+
+# 6. 提交（git 会自动生成 merge commit 信息）
+git commit
+
+# 7. 重新测试 —— 冲突解决改变了代码，必须验证
+npm test
+
+# 8. 推送到 PR 分支，冲突标记消失，CI 重新运行
+git push origin <branch>
+```
+
+**检查要点：**
+- [ ] 所有 `<<<<<<<` `=======` `>>>>>>>` 标记已清除（`git diff --check`）
+- [ ] 两边代码都保留所需部分
+- [ ] 测试通过后才推送
+
+### 合入后：CI 验证合并结果
+
+真正的兜底是 **CI 在合并后的真实代码上跑**：
+
+- 配置 GitHub Actions 同时监听 PR 和 main：
+  ```yaml
+  on:
+    pull_request:
+    push:
+      branches: [main]
+  ```
+- PR 合入 main 后 CI 立即在 main 上跑全量测试，集成问题自动暴露
+- 进阶：启用 **GitHub Merge Queue**（Repo Settings → Branch protection → Require merge queue）——把多个 PR 排队，用最新 main 逐个测试后再合并，集成问题在合并前就被拦截
+
+### 分支保护
+
+在 GitHub 仓库 Settings → Branches → Add rule 中建议开启：
+
+- **Require a pull request before merging** — 禁止直接推送 `main`
+- **Require approvals** — 至少 1 人审阅
+- **Dismiss stale approvals** — 新推送后重置审批
+- **Require status checks** — CI 全部通过后才能合并
+- **Require up-to-date branches** — 合并前必须包含最新 main（GitHub 页面提供 "Update branch" 按钮一键同步）
+- **Do not allow bypass** — 管理员也遵守
+
 ## Commit 格式
 
 ```
@@ -80,6 +187,10 @@ fix: 修复登录页空邮箱崩溃
 关联 #18
 ```
 
+## PR 前评审（可选）
+
+提交 PR 前可运行多角色代码评审（加载 `code-review` skill，派发 5 角色子代理：前端架构师 / 后端架构师 / DevOps / QA / 安全），与 vibe-core 第 4 步的代码评审复用同一套机制。大改动或跨领域改动建议执行；小改动可跳过。
+
 ## PR 模板
 
 ```markdown
@@ -94,6 +205,14 @@ fix: 修复登录页空邮箱崩溃
 - [ ] 本地验收通过
 - [ ] 兼容性测试通过
 ```
+
+## 工作流自身文件的保护
+
+`.opencode/skills/**`、`.opencode/commands/**`、`AGENTS.md`、`opencode.json` 是工作流的可信指令来源，被所有会话自动加载。对这些文件的改动：
+
+- 必须走 `code-review` 多角色评审（派发 5 角色子代理）
+- 必须遵守本 skill 的脱敏规则（防止注入恶意指令或凭据）
+- 提交信息标注 `chore` 类型
 
 ## 提交范围
 
@@ -113,13 +232,15 @@ fix: 修复登录页空邮箱崩溃
 | 凭据文件 | `credentials*` / `secrets*` / `service-account*.json` | 含云服务凭据 |
 | 网络凭据 | `.npmrc` / `.netrc` / `_netrc` | 包管理器/网络登录凭据 |
 | 远程访问 | `*.rdp` / `*.kdbx` / `*.ovpn` | RDP 配置/密码库/VPN |
+| 本地覆盖配置 | `*.local`（如 `.env.local`） | 本地覆盖配置不应入库 |
 | 日志 | `*.log` | 可能含调试信息泄漏 |
 | IDE 配置 | `.vscode/` / `.idea/` / `*.suo` | 每个人不同 |
 | 构建产物 | `node_modules/` / `dist/` / `build/` / `target/` | 用 `.gitignore` 排除 |
 | 系统文件 | `.DS_Store` / `Thumbs.db` | 每个系统都会生成 |
 
-**内容拦截（以下模式出现在任何文件中都会被拦截）：**
-- `-----BEGIN ... KEY-----` — 明文私钥 / PGP 密钥
+**内容拦截（以下模式出现在文本文件内容中都会被拦截；password 命中仅限配置文件 `.env*`/`.yml`/`.yaml`/`.json`/`.toml`/`.ini`/`.cfg`/`.conf`）：**
+- `-----BEGIN ... KEY-----` — 明文私钥 / PGP 密钥（含 ENCRYPTED PRIVATE KEY 等变体）
+- `password\s*[=:].+` — 硬编码密码（仅限配置文件）
 - `AKIA[0-9A-Z]{16}` — AWS Access Key
 - `gh[pousr]_[a-zA-Z0-9_]{36,}` — GitHub Token
 - `sk-[a-zA-Z0-9]{20,}` — OpenAI API Key
@@ -132,6 +253,25 @@ fix: 修复登录页空邮箱崩溃
 - 将真实凭据移到 `.env` → 添加到 `.gitignore` → commit 提交 `.env.example`（脱敏版）
 - 密钥通过 `~/.ssh/config` 或环境变量管理，不写入项目文件
 - 构建产物用 `.gitignore` 排除
+
+## 网络故障处理
+
+`git push` 因网络问题失败时，先检查 AGENTS.md 中是否已有 `代理端口` 配置，如有则直接使用：
+
+```bash
+set HTTP_PROXY=http://127.0.0.1:<端口>
+set HTTPS_PROXY=http://127.0.0.1:<端口>
+git push
+```
+
+如果没有则用 `question` 询问：
+
+1. 检测错误是否为网络问题（`Failed to connect` / `Could not connect` / `Connection timed out`）
+2. 如果是，用 `question` 询问：
+   - "推送因网络问题失败。你用的代理端口是多少？（直接回车跳过不走代理）"
+3. 用户提供端口后设置环境变量重试
+4. **如果推送成功** → 将代理端口写入 AGENTS.md，下次自动使用
+5. 如果用户跳过或重试仍失败，报网络错误
 
 ## 安全加固
 
@@ -150,13 +290,3 @@ git config --global commit.gpgsign true
 1. 生成 GPG 密钥：`gpg --full-generate-key`
 2. 列出公钥：`gpg --list-secret-keys --keyid-format=long`
 3. 导出并添加到 GitHub：`gpg --armor --export <KEY-ID>`
-
-### 分支保护
-
-在 GitHub 仓库 Settings → Branches → Add rule 中建议开启：
-
-- **Require a pull request before merging** — 禁止直接推送 `main`
-- **Require approvals** — 至少 1 人审阅
-- **Dismiss stale approvals** — 新推送后重置审批
-- **Require status checks** — CI 全部通过后才能合并
-- **Do not allow bypass** — 管理员也遵守

@@ -1,55 +1,63 @@
 ---
 name: integration
-description: Integrate a third-party service, API, or library. Full 6-step with emphasis on contract verification and error handling.
+description: 集成第三方服务、API 或库。完整 6 步流程，重点在于契约验证与错误处理。
 ---
 
-# Integration
+# 集成
 
-## Overview
+## 概述
 
-Integrating external systems introduces dependency risk. The focus is on contract verification, error handling, and graceful degradation.
+集成外部系统会引入依赖风险。重点在于契约验证、错误处理与优雅降级。
 
-## Step Adjustments
+## 步骤调整
 
-### Step 1 — Requirements Clarification
-Ask for:
-- Which external service/library to integrate
-- What data flows in/out
-- Authentication method (API key, OAuth, etc.)
-- Any existing integration patterns in the codebase to follow
-- Fallback behavior when the external service is unavailable
+### 第 1 步 — 需求澄清
+询问：
+- 要集成哪个外部服务/库
+- 哪些数据流入/流出
+- 认证方式（API key、OAuth 等）
+- 代码库中有哪些可遵循的现有集成模式
+- 外部服务不可用时的回退行为
 
-### Step 2 — Spec & Plan
-Spec must include:
-- Integration pattern (adapter/facade layer to isolate third-party code)
-- Error handling strategy (timeouts, retries, circuit breaker)
-- Authentication handling
-- Rate limiting consideration
-- Test strategy (mock vs real endpoint)
+### 第 2 步 — 规格与计划
+规格必须包含：
+- 集成模式（用适配器/门面层隔离第三方代码）
+- 错误处理策略（超时、重试、熔断器）
+- 认证处理
+- 限流考虑
+- 测试策略（mock 还是真实端点）
 
-### Step 4 — Development
-- Wrap external dependency in an adapter/abstraction layer
-- NEVER expose third-party types directly to the rest of the codebase
-- Handle all error scenarios: timeout, auth failure, malformed response, rate limit
+### 第 3 步 — 权限门禁
+使用 `question` 工具请求许可："我将通过 [适配器/门面层] 集成 [外部服务]，按 [方案] 处理 [认证/错误/限流]。我可以开始吗？"**未经明确许可不得编写代码。**
 
-### Step 5 — Acceptance
-- Test with real endpoint if possible (not just mocks)
-- Verify auth flow works end-to-end
-- Test error scenarios: network failure, invalid credentials, malformed data
-- Verify fallback behavior
+### 第 4 步 — 开发
+- 将外部依赖封装在适配器/抽象层中
+- **绝不**将第三方类型直接暴露给代码库其他部分
+- 处理所有错误场景：超时、认证失败、畸形响应、限流
 
-## Common Rationalizations
+### 第 5 步 — 验收
+- 尽可能用真实端点测试（不仅是 mock）
+- 验证认证流程端到端可用
+- 测试错误场景：网络故障、非法凭据、畸形数据
+- 验证回退行为
 
-| Rationalization | Reality |
-|----------------|---------|
-| "I'll add error handling later" | The integration IS error handling. Do it now. |
-| "The API always returns this shape" | APIs change. Validate responses. |
-| "I'll use the SDK directly everywhere" | Wrap it. When the SDK changes, you'll thank yourself. |
+### 第 6 步 — 兼容性测试
+1. **门禁：** 使用 `question` 工具请求开始兼容性测试的许可。
+2. 验证范围：现有调用方/接口在集成后仍然可用；外部服务离线时已有功能正常降级；无数据丢失或损坏。
+3. 发现问题：汇总并返回第 2 步。
 
-## Verification
+## 常见借口
 
-- [ ] External service is wrapped behind an adapter/abstraction
-- [ ] Error handling covers: timeout, auth failure, bad response, rate limit
-- [ ] Integration tests pass with real endpoints
-- [ ] Fallback behavior works when service is offline
-- [ ] No third-party types leak into core code
+| 借口 | 现实 |
+|------|------|
+| "我以后再补错误处理" | 集成本身就是错误处理。现在就做。 |
+| "这个 API 一直返回这个结构" | API 会变。要校验响应。 |
+| "我到处直接使用 SDK 就好" | 封装它。SDK 变更时你会感谢自己。 |
+
+## 验证清单
+
+- [ ] 外部服务封装在适配器/抽象层后面
+- [ ] 错误处理覆盖：超时、认证失败、错误响应、限流
+- [ ] 集成测试通过真实端点验证
+- [ ] 服务离线时回退行为正常
+- [ ] 核心代码中没有第三方类型泄漏

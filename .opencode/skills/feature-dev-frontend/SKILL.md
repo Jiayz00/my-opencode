@@ -1,47 +1,50 @@
 ---
 name: feature-dev-frontend
-description: Build a new frontend feature from scratch. Full 6-step with emphasis on UI component structure, styling patterns, and browser verification.
+description: 从零构建新的前端功能。完整 6 步流程，重点在于 UI 组件结构、样式模式与浏览器验证。
 ---
 
-# Feature Development — Frontend
+# 功能开发 — 前端
 
-## Overview
+## 概述
 
-Use this when building a new user-facing feature. The generic 6-step workflow applies. This skill adds frontend-specific details to each step.
+在构建新的面向用户的功能时使用本技能。通用 6 步流程仍然适用。本技能为每一步补充前端相关的细节。
 
-## Step Adjustments
+## 步骤调整
 
-### Step 1 — Requirements Clarification
-Ask specifically about:
-- Target framework (React/Vue/Angular/etc.)
-- Styling approach (CSS Modules/Tailwind/styled-components/etc.)
-- State management requirements
-- Responsive design requirements
-- Browser support targets
+### 第 1 步 — 需求澄清
+具体询问：
+- 目标框架（React/Vue/Angular 等）
+- 样式方案（CSS Modules/Tailwind/styled-components 等）
+- 状态管理需求
+- 响应式设计要求
+- 浏览器支持目标
 
-### Step 2 — Spec & Plan
-Spec must include:
-- Component tree / hierarchy
-- Data flow (props, state, API calls)
-- Loading/empty/error states for each component
-- Routing changes if any
+### 第 2 步 — 规格与计划
+规格必须包含：
+- 组件树 / 层级结构
+- 数据流（props、state、API 调用）
+- 每个组件的加载/空/错误状态
+- 路由变更（如有）
 
-### Step 4 — Development
-- Build UI components first (data-agnostic), then wire up data
-- Follow existing component patterns in the codebase
-- Ensure all states are handled: loading, empty, error, edge cases
-- Use existing design system components when available
+### 第 3 步 — 权限门禁
+使用 `question` 工具请求许可（vibe-core 第 3 步完整流程）："我将通过修改 [文件] 并采用 [方案] 实现 [X]。我可以开始吗？"**未经明确许可不得编写代码。**
 
-### Step 5 — Acceptance
-- Start local dev server and self-test
-- Verify in browser (not just unit tests)
-- Check responsive layout
-- Check loading/error states visually
+### 第 4 步 — 开发
+- 先构建 UI 组件（与数据无关），再接入数据
+- 遵循代码库中现有的组件模式
+- 确保所有状态都已处理：加载、空、错误、边界情况
+- 可用时优先使用现有的设计系统组件
 
-## Verification
+### 第 5 步 — 验收
+- 启动本地开发服务器并自测
+- 在浏览器中验证（不仅是单元测试）
+- 检查响应式布局
+- 目视检查加载/错误状态
 
-- [ ] Component renders all states (data, loading, empty, error)
-- [ ] Responsive design works at target breakpoints
-- [ ] No console errors
-- [ ] Existing tests still pass
-- [ ] Follows existing component patterns
+## 验证清单
+
+- [ ] 组件渲染所有状态（数据、加载、空、错误）
+- [ ] 响应式设计在目标断点下正常工作
+- [ ] 无控制台错误
+- [ ] 现有测试仍然通过
+- [ ] 遵循现有组件模式

@@ -1,56 +1,59 @@
 ---
 name: dependency-update
-description: Update project dependencies. Focus on changelog review, breaking changes handling, and compatibility verification.
+description: 更新项目依赖。重点审查变更日志、处理破坏性变更、验证兼容性。
 ---
 
-# Dependency Update
+# 依赖更新
 
-## Overview
+## 概述
 
-Updating dependencies requires checking changelogs, handling breaking changes, and verifying nothing broke. The workflow is structured around incremental, testable updates.
+更新依赖需要检查变更日志、处理破坏性变更，并验证没有破坏任何东西。工作流围绕增量式、可测试的更新来组织。
 
-## Step Adjustments
+## 步骤调整
 
-### Step 1 — Requirements Clarification
-Ask for:
-- Which dependencies to update (specific packages or all)
-- Target versions (latest? next major? specific range?)
-- Priority: security fix? new features? staying current?
-- Any known breaking changes to prepare for
+### 第 1 步 — 需求澄清
+问清楚：
+- 更新哪些依赖（特定包还是全部）
+- 目标版本（最新版？下一个主版本？特定范围？）
+- 优先级：安全修复？新功能？保持最新？
+- 是否有已知的破坏性变更需要准备
 
-### Step 2 — Spec & Plan
-Plan must include:
-- List of dependencies to update, ordered by risk (lowest first)
-- Breaking change review for each major update
-- Testing strategy for each update
-- Rollback approach (lockfile restore)
+### 第 2 步 — 规格与计划
+计划必须包含：
+- 要更新的依赖列表，按风险排序（风险最低的优先）
+- 每次主版本更新的破坏性变更审查
+- 每次更新的测试策略
+- 回滚方案（lockfile 恢复）
 
-### Step 4 — Development
-- Update ONE dependency at a time
-- After each update: build → test → lint
-- If breaking: read changelog, adapt code, run tests
-- If tests fail: decide — fix now or skip this update
+### 第 3 步 — 权限门禁
+使用 `question` 工具请求许可："我将按风险从低到高更新 [依赖列表]，每次更新后运行 构建→测试→lint。我可以开始吗？"**未经明确许可不得更新依赖。**
 
-### Step 5 — Acceptance
-- Full test suite passes
-- Manual smoke test of affected areas
+### 第 4 步 — 开发
+- 一次只更新一个依赖
+- 每次更新后：构建 → 测试 → lint
+- 若有破坏性变更：阅读变更日志、调整代码、运行测试
+- 若测试失败：决定——立即修复或跳过本次更新
 
-### Step 6 — Compatibility
-- Verify with other dependencies (peer dependency conflicts)
-- Check for deprecated API warnings
+### 第 5 步 — 验收
+- 完整测试套件通过
+- 对受影响区域进行手动冒烟测试
 
-## Common Rationalizations
+### 第 6 步 — 兼容性
+- 验证与其他依赖的兼容性（peer dependency 冲突）
+- 检查废弃 API 警告
 
-| Rationalization | Reality |
+## 常见借口
+
+| 借口 | 现实 |
 |----------------|---------|
-| "I'll update all deps at once" | When something breaks, you won't know what caused it. One at a time. |
-| "Minor version can't break" | Wrong. Read the changelog. |
-| "It's just dev dependencies" | Dev deps run in your CI. They can break your build. |
+| "一次性更新所有依赖" | 出错时你不知道是哪次更新导致的。一次一个。 |
+| "小版本不会破坏任何东西" | 错了。去看变更日志。 |
+| "只是开发依赖" | 开发依赖运行在你的 CI 里。它们能搞坏构建。 |
 
-## Verification
+## 验证清单
 
-- [ ] Each dependency updated one at a time
-- [ ] Build passes after each update
-- [ ] Tests pass after each update
-- [ ] Breaking changes (if any) are documented and handled
-- [ ] No new security advisories introduced
+- [ ] 每个依赖都一次一个地更新
+- [ ] 每次更新后构建通过
+- [ ] 每次更新后测试通过
+- [ ] 破坏性变更（如有）已记录并处理
+- [ ] 未引入新的安全公告

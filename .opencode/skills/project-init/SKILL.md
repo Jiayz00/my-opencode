@@ -1,53 +1,56 @@
 ---
 name: project-init
-description: Initialize a new project or set up a development environment. First-time setup including scaffolding, configuration, and tooling.
+description: 初始化新项目或搭建开发环境。首次设置，包括脚手架、配置和工具链。
 ---
 
-# Project Init
+# 项目初始化
 
-## Overview
+## 概述
 
-Setting up a new project from scratch or cloning an existing one. The focus is on getting a working development environment with all tooling configured.
+从零搭建新项目，或克隆已有项目。重点是获得一个配置齐全、可正常工作的开发环境。
 
-## Step Adjustments
+## 步骤调整
 
-### Step 1 — Requirements Clarification
-Ask for:
-- Project type (frontend/backend/fullstack)
-- Tech stack preferences (framework, language, database, etc.)
-- Any specific project scaffolding tool to use
-- Package manager preference
-- Testing framework preference
-- Git initialization (new repo or clone)
+### 第 1 步 — 需求澄清
+问清楚：
+- 项目类型（前端/后端/全栈）
+- 技术栈偏好（框架、语言、数据库等）
+- 是否有特定的项目脚手架工具
+- 包管理器偏好
+- 测试框架偏好
+- Git 初始化方式（新建仓库或克隆）
 
-### Step 2 — Spec & Plan
-Plan must include:
-- Project structure (directories, configuration files)
-- Dependencies to install
-- Tooling configuration (linter, formatter, type checker, test runner)
-- Initial CI/CD setup if needed
-- README/documentation plan
+### 第 2 步 — 规格与计划
+计划必须包含：
+- 项目结构（目录、配置文件）
+- 需要安装的依赖
+- 工具链配置（linter、格式化器、类型检查器、测试运行器）
+- 如有需要，初始 CI/CD 配置
+- README/文档计划
 - `.gitignore` 覆盖所有禁止提交的模式（密钥、凭据、构建产物、IDE 配置等）
 
-### Step 4 — Development
-- Scaffold project structure
+### 第 3 步 — 权限门禁
+使用 `question` 工具请求许可："我将按 [项目结构/技术栈] 初始化项目，安装 [依赖清单]。我可以开始吗？"**未经明确许可不得搭建项目。**
+
+### 第 4 步 — 开发
+- 搭建项目结构
 - 创建 `.gitignore`（按 git-workflow 的禁止提交列表生成，覆盖密钥、凭据、构建产物、IDE 配置、系统文件等）
-- Configure all tooling
-- Verify the dev experience (build, test, lint all work)
-- Initialize git if applicable
+- 配置所有工具链
+- 验证开发体验（构建、测试、lint 都能运行）
+- 如适用，初始化 git
 
-### Step 5 — Acceptance
-Use `question` tool:
-- "The project is initialized. Build passes, tests pass, lint passes. Dev server starts at [URL]. Does everything look good?"
+### 第 5 步 — 验收
+使用 `question` 工具：
+- "项目已初始化。构建通过、测试通过、lint 通过。开发服务器在 [URL] 启动。一切看起来正常吗？"
 
-### Step 6 — Compatibility
-- Only relevant if cloning/extending an existing project
-- Verify no conflicts with existing tooling
+### 第 6 步 — 兼容性
+- 仅在克隆或扩展已有项目时相关
+- 验证与现有工具链无冲突
 
-## Verification
+## 验证清单
 
-- [ ] `npm run build` (or equivalent) passes
-- [ ] `npm test` (or equivalent) passes
-- [ ] `npm run lint` (or equivalent) passes
-- [ ] Dev server starts successfully
-- [ ] Tooling config matches project requirements
+- [ ] `npm run build`（或等价命令）通过
+- [ ] `npm test`（或等价命令）通过
+- [ ] `npm run lint`（或等价命令）通过
+- [ ] 开发服务器成功启动
+- [ ] 工具链配置符合项目要求

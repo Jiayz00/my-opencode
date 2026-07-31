@@ -1,65 +1,65 @@
 ---
 name: acceptance-fullstack
-description: Full-stack acceptance verification in test container. End-to-end testing before compatibility testing.
+description: 在测试容器中进行全栈验收验证。兼容性测试之前的端到端测试。
 ---
 
-# Full-Stack Acceptance
+# 全栈验收
 
-## Overview
+## 概述
 
-This handles the full-stack acceptance path from Step 5 of the core workflow. Testing happens in a test container (not local), covering the complete frontend-backend-data flow.
+本技能处理核心工作流第 5 步中的全栈验收路径。测试在测试容器中进行（而非本地），覆盖完整的前端-后端-数据链路。
 
-## Server Access
+## 服务器访问
 
-This skill requires access to a test server. Follow the **Sensitive Information Handling** rules in `vibe-core`:
+本技能需要访问测试服务器。遵循 `vibe-core` 中的**敏感信息处理**规则：
 
-1. Check env vars: `OPENCODE_TEST_HOST`, `OPENCODE_TEST_USER`, `OPENCODE_TEST_KEY`, `OPENCODE_TEST_PORT`, `OPENCODE_TEST_DIR`
-2. If missing, use `question` to ask the user one variable at a time
-3. Never save credentials to files or echo them back
+1. 检查环境变量：`OPENCODE_TEST_HOST`、`OPENCODE_TEST_USER`、`OPENCODE_TEST_KEY`、`OPENCODE_TEST_PORT`、`OPENCODE_TEST_DIR`
+2. 如果缺失，使用 `question` 一次向用户询问一个变量
+3. 绝不将凭据保存到文件或回显
 
-## Process
+## 流程
 
-### 1. Pre-Check
-- All unit/integration tests pass
-- Build succeeds (frontend + backend)
-- Test server is accessible (SSH connection verified)
+### 1. 预检查
+- 所有单元/集成测试通过
+- 构建成功（前端 + 后端）
+- 测试服务器可访问（SSH 连接已验证）
 
-### 2. Deploy to Test Container
-- SSH into test server: `ssh -i %OPENCODE_TEST_KEY% %OPENCODE_TEST_USER%@%OPENCODE_TEST_HOST%`
-- Navigate to deployment directory: `cd %OPENCODE_TEST_DIR%`
-- Deploy: `docker-compose up -d --build` (or equivalent)
-- Verify the container starts successfully: `docker ps`
-- Confirm all services are running: check container logs
+### 2. 部署到测试容器
+- SSH 进入测试服务器：`ssh -i %OPENCODE_TEST_KEY% %OPENCODE_TEST_USER%@%OPENCODE_TEST_HOST%`
+- 进入部署目录：`cd %OPENCODE_TEST_DIR%`
+- 部署：`docker-compose up -d --build`（或等效命令）
+- 验证容器成功启动：`docker ps`
+- 确认所有服务都在运行：检查容器日志
 
-### 3. End-to-End Verification
-Run through the complete user flow:
-- Frontend connects to backend
-- API endpoints respond correctly
-- Data flows end-to-end (UI → API → DB and back)
-- Error propagation works (backend error → frontend display)
+### 3. 端到端验证
+走完完整的用户流程：
+- 前端连接后端
+- API 端点正确响应
+- 数据端到端流转（UI → API → DB 并返回）
+- 错误传播正常（后端错误 → 前端展示）
 
-If issues found:
-- Collect full summary with logs/evidence
-- Return to Step 2 of core workflow
-- Do NOT proceed to user reporting
+如果发现问题：
+- 汇总完整信息并附日志/证据
+- 返回核心工作流第 2 步
+- 不得进入用户报告阶段
 
-### 4. User Report
-Use `question` tool to present:
-- Summary of implementation
-- Test environment URL
-- Specific flows/features to verify
-- Account/credentials if needed for testing
+### 4. 用户报告
+使用 `question` 工具呈现：
+- 实现摘要
+- 测试环境 URL
+- 需要验证的具体流程/功能
+- 测试所需的账户/凭据
 
-### 5. User Acceptance
-- Wait for user to confirm acceptance
-- If user reports issues or requests changes → return to Step 1 of core workflow
-- If user accepts → proceed to Step 6
+### 5. 用户验收
+- 等待用户确认验收
+- 如果用户反馈问题或要求更改 → 返回核心工作流第 1 步
+- 如果用户接受 → 进入第 6 步
 
-## Verification
+## 验证
 
-- [ ] Application deployed to test container
-- [ ] Frontend-backend connectivity verified
-- [ ] End-to-end flow works (UI → API → DB)
-- [ ] Error handling works end-to-end
-- [ ] User has been notified via `question`
-- [ ] User has accepted
+- [ ] 应用已部署到测试容器
+- [ ] 前端-后端连通性已验证
+- [ ] 端到端流程正常（UI → API → DB）
+- [ ] 错误处理端到端正常
+- [ ] 已通过 `question` 通知用户
+- [ ] 用户已接受

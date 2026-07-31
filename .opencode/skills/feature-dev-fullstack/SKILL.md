@@ -1,46 +1,46 @@
 ---
 name: feature-dev-fullstack
-description: Build a new full-stack feature touching frontend, backend, and data. Applies frontend and backend skills together with integration focus.
+description: 构建同时涉及前端、后端和数据的新全栈功能。结合前端与后端技能，并重点关注集成。
 ---
 
-# Feature Development — Full Stack
+# 功能开发 — 全栈
 
-## Overview
+## 概述
 
-Use this when a feature spans frontend, backend, and database. Combines `feature-dev-frontend` and `feature-dev-backend`. Integration testing is critical.
+当功能横跨前端、后端和数据库时使用本技能。综合运用 `feature-dev-frontend` 与 `feature-dev-backend`。集成测试至关重要。
 
-## Step Adjustments
+## 步骤调整
 
-### Step 1 — Requirements Clarification
-Ask about everything from both frontend and backend lists, plus:
-- Data flow from UI → API → DB and back
-- API contract between frontend and backend
-- CORS/network considerations
+### 第 1 步 — 需求澄清
+询问前端和后端清单中的所有问题，外加：
+- 从 UI → API → 数据库再返回的数据流
+- 前端与后端之间的 API 契约
+- CORS / 网络相关考虑
 
-### Step 2 — Spec & Plan
-Spec must include:
-- Full data flow diagram (UI → API → Service → DB → response)
-- API contract (shared types/schemas)
-- Component tree + data dependencies
-- Integration test plan
+### 第 2 步 — 规格与计划
+规格必须包含：
+- 完整的数据流图（UI → API → 服务层 → 数据库 → 响应）
+- API 契约（共享类型 / schema）
+- 组件树 + 数据依赖关系
+- 集成测试计划
 
-### Step 4 — Development
-Order:
-1. Data model / schema
-2. Backend API endpoints
-3. Frontend components + API integration
-4. Integration wiring (verify end-to-end)
+### 第 4 步 — 开发
+顺序：
+1. 数据模型 / schema
+2. 后端 API 端点
+3. 前端组件 + API 集成
+4. 集成接线（端到端验证）
 
-### Step 5 — Acceptance
-- Test in test container (not just local)
-- Verify frontend connects to backend correctly
-- Test full user flow from UI to DB and back
-- Test error propagation (backend error → frontend display)
+### 第 5 步 — 验收
+- 在测试容器中测试（不仅是本地）
+- 验证前端能正确连接后端
+- 测试从 UI 到数据库再返回的完整用户流程
+- 测试错误传播（后端错误 → 前端展示）
 
-## Verification
+## 验证清单
 
-- [ ] End-to-end flow works (UI → API → DB → response → display)
-- [ ] Frontend handles all API response states (success, error, loading, empty)
-- [ ] Backend validates input and handles edge cases
-- [ ] Integration tests pass
-- [ ] No CORS or connectivity issues
+- [ ] 端到端流程正常工作（UI → API → 数据库 → 响应 → 展示）
+- [ ] 前端处理所有 API 响应状态（成功、错误、加载、空）
+- [ ] 后端校验输入并处理边界情况
+- [ ] 集成测试通过
+- [ ] 无 CORS 或连接问题

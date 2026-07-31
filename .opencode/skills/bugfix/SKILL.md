@@ -1,58 +1,58 @@
 ---
 name: bugfix
-description: Fix a bug in any layer. Starts with reproduction and root-cause analysis before writing any fix.
+description: 修复任意层的缺陷。在编写任何修复之前，先从复现和根因分析开始。
 ---
 
-# Bug Fix
+# 缺陷修复
 
-## Overview
+## 概述
 
-Bug fixes follow the 6-step workflow with a stronger emphasis on reproduction and root cause analysis in Step 2. The goal is to fix the root cause, not just the symptom.
+缺陷修复遵循 6 步工作流，但在第 2 步更强调复现和根因分析。目标是修复根本原因，而不仅仅是表象。
 
-## Step Adjustments
+## 步骤调整
 
-### Step 1 — Requirements Clarification
-Ask for:
-- Steps to reproduce (exact, detailed)
-- Expected vs actual behavior
-- Environment details (browser/OS/version)
-- When did it start? Any recent changes?
-- Severity (blocker / major / minor)
+### 第 1 步 — 需求澄清
+询问：
+- 复现步骤（精确、详细）
+- 预期行为与实际行为
+- 环境详情（浏览器/操作系统/版本）
+- 何时开始出现？近期是否有任何变更？
+- 严重程度（阻塞 / 严重 / 轻微）
 
-### Step 2 — Spec & Plan
-- Step 1: **Reproduce** — confirm you can see the bug
-- Step 2: **Localize** — identify the root cause (specific file, function, condition)
-- Step 3: **Design the fix** — decide what to change and why
-- For complex bugs: write a mini-spec describing root cause and fix approach
+### 第 2 步 — 规格与计划
+- 第 1 步：**复现** —— 确认你能看到该缺陷
+- 第 2 步：**定位** —— 确定根本原因（具体文件、函数、条件）
+- 第 3 步：**设计修复方案** —— 决定改什么以及为什么
+- 对于复杂缺陷：编写一个描述根因和修复方案的精简规格
 
-### Step 3 — Permission Gate
-Present: "I identified the root cause as [X] in [file:line]. The fix is [approach]. May I proceed?"
+### 第 3 步 — 权限门禁
+呈现："我已确认根本原因是 [file:line] 中的 [X]。修复方案是 [方案]。我可以继续吗？"
 
-### Step 4 — Development
-- Apply the fix
-- Add a regression test that would catch this bug
-- Verify the fix and that existing tests still pass
+### 第 4 步 — 开发
+- 应用修复
+- 添加能够捕获该缺陷的回归测试
+- 验证修复生效且现有测试仍然通过
 
-### Step 5 — Acceptance
-- Confirm the bug is resolved (run reproduction steps)
-- Run existing test suite
-- If frontend: visual check
+### 第 5 步 — 验收
+- 确认缺陷已解决（执行复现步骤）
+- 运行现有测试套件
+- 如果是前端：进行视觉检查
 
-### Step 6 — Compatibility
-- Run regression tests focused on the affected area
+### 第 6 步 — 兼容性
+- 运行聚焦于受影响区域的回归测试
 
-## Common Rationalizations
+## 常见借口
 
-| Rationalization | Reality |
+| 借口 | 现实 |
 |----------------|---------|
-| "I know what's wrong, I'll just fix it" | Skip reproduction and you might fix the wrong thing. Reproduce first. |
-| "This is a one-line fix, no need for a plan" | One-line fixes still need root cause analysis. |
-| "I'll add the regression test later" | Now or never. Regression tests are part of the fix. |
+| "我知道哪里出错了，直接修就行" | 跳过复现可能会修错地方。先复现。 |
+| "这是单行修复，不需要计划" | 单行修复也需要根因分析。 |
+| "我以后再补回归测试" | 要么现在，要么没有。回归测试是修复的一部分。 |
 
-## Verification
+## 验证
 
-- [ ] Bug is reproduced and confirmed
-- [ ] Root cause is identified (not just symptom)
-- [ ] Fix addresses root cause
-- [ ] Regression test added
-- [ ] All existing tests pass
+- [ ] 缺陷已复现并确认
+- [ ] 已识别根本原因（而不仅仅是表象）
+- [ ] 修复针对根本原因
+- [ ] 已添加回归测试
+- [ ] 所有现有测试通过

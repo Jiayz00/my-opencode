@@ -1,47 +1,57 @@
 ---
 name: security-audit
-description: Targeted security review. Read-only analysis focusing on vulnerabilities, auth patterns, and data protection.
+description: 针对性安全审查。只读分析，聚焦漏洞、认证模式和数据保护。多角色评审中的安全工程师角色。
 ---
 
-# Security Audit
+# 安全审计
 
-## Overview
+## 概述
 
-A read-only security review. You analyze code for vulnerabilities and provide findings. Do NOT modify any code.
+只读安全审查。你分析代码中的漏洞并给出发现。**不得修改任何代码。**
 
-## Workflow Adaptation
+**多角色评审中的角色：** 在 Step 2 规格评审 / Step 4 代码评审中，本 skill 由安全工程师子代理加载，评审规格/计划或代码改动的安全性，回答"本次修改会不会引入安全风险"。代码评审模式下发现必须带 file:line 引用。
 
-### Step 1 — Clarify
-Ask the user:
-- Scope: what to audit (specific files, modules, or entire codebase)
-- Threat model: what's the risk profile? (public-facing? handles sensitive data? PCI/HIPAA/etc.?)
-- Any previous audit findings to follow up on
+## 工作流调整
 
-### Step 2 — Analysis (replaces Spec & Plan)
-Review across these security dimensions:
-- **Authentication:** Session management, password handling, MFA, token validation
-- **Authorization:** Access control checks, privilege escalation paths
-- **Input Validation:** SQL injection, XSS, command injection, SSRF
-- **Data Protection:** Encryption (at rest and in transit), secrets management
-- **Dependencies:** Known vulnerable versions, supply chain risks
-- **Configuration:** Default credentials, debug endpoints, CORS, security headers
+### 第 1 步 — 澄清
+询问用户：
+- 范围：审计什么（特定文件、模块，还是整个代码库）
+- 威胁模型：风险画像是什么？（面向公众？处理敏感数据？PCI/HIPAA 等合规要求？）
+- 是否有需要跟进的历史审计发现
 
-Write findings document:
-- Severity: Critical / High / Medium / Low / Info
-- Location: file:line for each finding
-- Impact: what an attacker could do
-- Fix: specific remediation steps
+### 第 2 步 — 分析（替代规格与计划）
+从以下安全维度进行审查：
+- **认证：** 会话管理、密码处理、MFA、令牌验证
+- **授权：** 访问控制检查、权限提升路径
+- **输入验证：** SQL 注入、XSS、命令注入、SSRF
+- **数据保护：** 加密（静态和传输中）、密钥管理
+- **依赖：** 已知漏洞版本、供应链风险
+- **配置：** 默认凭据、调试端点、CORS、安全响应头
 
-### Step 3 — Gate
-Present: "Audit complete. [X critical, Y high, Z medium] findings. May I present the report?"
+编写发现报告：
+- 严重级别：严重 / 高 / 中 / 低 / 提示
+- 位置：代码评审模式下必须为 file:line（规格评审用文档路径/章节）
+- 影响：攻击者可以利用它做什么
+- 修复：具体的修复步骤
 
-### Step 4 — Not applicable (read-only)
+### 第 3 步 — 门禁
+提出："审计完成。发现 [X 个严重、Y 个高、Z 个中] 问题。我可以展示报告吗？"
 
-### Step 5 — Present findings and wait for user feedback.
+### 第 4 步 — 不适用（只读）
 
-## Verification
+### 第 5 步 — 展示发现，等待用户反馈。
 
-- [ ] All security dimensions covered
-- [ ] Each finding has severity, location, impact, and fix
-- [ ] No code was modified during audit
-- [ ] Report is actionable (user can act on findings)
+## 规则
+
+- 只读审查，不修改任何文件
+- 不运行会修改系统的命令
+- 报告内建议须自洽（与其他角色的冲突由主代理交叉复核裁决）
+
+## 验证清单
+
+- [ ] 所有安全维度都已覆盖
+- [ ] 每个发现都包含严重级别、位置、影响和修复
+- [ ] 代码评审模式下每个发现均带 file:line 引用
+- [ ] 报告内建议已自洽检查
+- [ ] 审计期间未修改任何代码
+- [ ] 报告可执行（用户能根据发现采取行动）

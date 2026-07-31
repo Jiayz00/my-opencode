@@ -1,46 +1,46 @@
 ---
 name: prototype
-description: Quick proof-of-concept or experimental feature. Abbreviated workflow — speed is prioritized, but structure is maintained.
+description: 快速概念验证或实验性功能。精简工作流——速度优先，但保持结构。
 ---
 
-# Prototype / POC
+# 原型 / POC
 
-## Overview
+## 概述
 
-Prototypes are for exploration and validation, not production. The workflow is abbreviated: Step 2 is lightweight, Step 3 permission is still required, and Step 5-6 may be skipped entirely.
+原型用于探索和验证，而非生产环境。工作流已精简：第 2 步轻量化，第 3 步权限门禁仍然必需，第 5-6 步可完全跳过。
 
-## Workflow Adaptation
+## 工作流调整
 
-### Step 1 — Clarify
-Ask:
-- What question are we trying to answer with this prototype?
-- What "good enough" looks like (success criteria for the POC)
-- Is there a time box? (e.g., "spend no more than 2 hours")
-- Will this code be thrown away or evolved into production?
+### 第 1 步 — 澄清
+问清楚：
+- 这个原型要回答什么问题？
+- "足够好"是什么样（POC 的成功标准）
+- 是否有时间盒限制？（例如"最多花 2 小时"）
+- 这段代码会被丢弃，还是会演进为生产代码？
 
-### Step 2 — Spec & Plan (Lightweight)
-- Brief 1-paragraph plan describing the approach
-- No multi-round review needed — one round is sufficient
-- Focus on the risky/unknown part (what we're trying to learn)
+### 第 2 步 — 规格与计划（轻量化）
+- 用一小段话描述方法的计划
+- 无需多轮评审——一轮即可
+- 聚焦于有风险/未知的部分（我们想验证什么）
 
-### Step 3 — Permission Gate
-Present: "Prototype approach: [brief plan]. Estimated effort: [time]. May I proceed?"
+### 第 3 步 — 权限门禁
+提出："原型方案：[简要计划]。预计工作量：[时间]。我可以开始吗？"
 
-### Step 4 — Development
-- Speed over quality (within reason)
-- Minimal tests or none (prototype quality)
-- Comment anything that would need rework for production
-- Call out unknowns discovered during building
+### 第 4 步 — 开发
+- 速度优先于质量（合理范围内）
+- 最少测试或不写测试（原型质量）
+- 标注任何生产化时需要返工的地方
+- 指出构建过程中发现的新问题
 
-### Step 5 — Acceptance
-- Demonstrate the prototype works
-- Ask: is this direction correct? Should we productionize it?
+### 第 5 步 — 验收
+- 演示原型可用
+- 询问：这个方向正确吗？要不要生产化？
 
-### Step 6 — Skip (unless explicitly requested)
+### 第 6 步 — 跳过（除非明确要求）
 
-## Verification
+## 验证清单
 
-- [ ] Prototype answers the question it was built for
-- [ ] Risks/unknowns are documented
-- [ ] Decisions needed for production path are captured
-- [ ] User approves direction or provides next steps
+- [ ] 原型回答了它要解决的问题
+- [ ] 风险/未知项已记录
+- [ ] 生产化路径所需的决策已捕获
+- [ ] 用户认可方向或给出下一步指示

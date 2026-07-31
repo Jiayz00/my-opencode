@@ -1,59 +1,62 @@
 ---
 name: database-change
-description: Schema design, migration scripts, and data operations. Full 6-step with emphasis on migration safety and rollback.
+description: 模式设计、迁移脚本和数据操作。完整 6 步，重点强调迁移安全性和回滚。
 ---
 
-# Database Change
+# 数据库变更
 
-## Overview
+## 概述
 
-Database changes are high-risk because they affect all layers of the stack. The workflow emphasizes careful migration design, data preservation, and rollback planning.
+数据库变更风险很高，因为它影响技术栈的所有层级。该工作流强调谨慎的迁移设计、数据保护和回滚规划。
 
-## Step Adjustments
+## 步骤调整
 
-### Step 1 — Requirements Clarification
-Ask for:
-- What data needs to be stored/changed
-- Whether this is additive (new table/column) or destructive (drop/rename)
-- Existing data volume (how much data needs migration?)
-- Downtime tolerance
-- Rollback requirements
+### 第 1 步 — 需求澄清
+询问：
+- 需要存储/变更哪些数据
+- 这是增量变更（新表/新列）还是破坏性变更（删除/重命名）
+- 现有数据量（需要迁移多少数据？）
+- 停机容忍度
+- 回滚要求
 
-### Step 2 — Spec & Plan
-Spec must include:
-- Schema change (exact SQL or ORM migration)
-- Data migration strategy (if moving/transforming data)
-- Rollback migration (how to undo)
-- Impact analysis (what application code needs updating)
-- Zero-downtime approach if required
+### 第 2 步 — 规格与计划
+规格必须包含：
+- 模式变更（精确 SQL 或 ORM 迁移）
+- 数据迁移策略（如果涉及移动/转换数据）
+- 回滚迁移（如何撤销）
+- 影响分析（哪些应用代码需要更新）
+- 如需要，零停机方案
 
-### Step 3 — Permission Gate
-Present full migration plan. User MUST approve before any schema changes.
+### 第 3 步 — 权限门禁
+使用 `question` 工具呈现完整的迁移计划。用户必须在任何模式变更之前明确批准。
 
-### Step 4 — Development
-- Write migration script
-- Write rollback script
-- Test migration on a copy of production data (or representative sample)
-- Verify data integrity before and after
+### 第 4 步 — 开发
+- 编写迁移脚本
+- 编写回滚脚本
+- 在生产数据的副本（或代表性样本）上测试迁移
+- 验证迁移前后的数据完整性
 
-### Step 6 — Compatibility
-Critical for destructive changes:
-- Verify application works with new schema
-- Verify rollback works correctly
-- Test with actual data volume (performance of migration)
+### 第 5 步 — 验收
+使用 `question` 工具向用户报告迁移结果（迁移了什么、数据完整性验证结果、如何回滚），等待用户确认迁移成功。
 
-## Common Rationalizations
+### 第 6 步 — 兼容性
+对破坏性变更至关重要：
+- 验证应用在新模式下正常工作
+- 验证回滚正确执行
+- 使用真实数据量测试（迁移性能）
 
-| Rationalization | Reality |
+## 常见借口
+
+| 借口 | 现实 |
 |----------------|---------|
-| "It's just adding a column" | Famous last words. Write the rollback. |
-| "The migration is reversible" | Prove it. Test the rollback. |
-| "Small data, no need to test" | Schema changes affect queries. Test with realistic data. |
+| "只是加一列而已" | 经典遗言。把回滚写上。 |
+| "迁移是可逆的" | 证明它。测试回滚。 |
+| "数据量小，不用测" | 模式变更会影响查询。用真实数据测试。 |
 
-## Verification
+## 验证
 
-- [ ] Migration script runs clean
-- [ ] Rollback script runs clean (tested)
-- [ ] Data integrity verified before and after
-- [ ] Application code updated to match new schema
-- [ ] Migration tested with realistic data volume
+- [ ] 迁移脚本干净运行
+- [ ] 回滚脚本干净运行（已测试）
+- [ ] 迁移前后的数据完整性已验证
+- [ ] 应用代码已更新以匹配新模式
+- [ ] 迁移已用真实数据量测试

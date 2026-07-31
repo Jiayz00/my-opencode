@@ -1,58 +1,76 @@
 ---
 name: code-review
-description: Review code quality, architecture, security, and maintainability. Read-only — no code changes allowed.
+description: 评审代码质量、架构、安全性和可维护性。总指挥模式——派发 5 角色子代理并行评审。只读 —— 不允许修改代码。
 ---
 
-# Code Review
+# 代码评审
 
-## Overview
+## 概述
 
-This is a read-only scenario. The purpose is to analyze code and provide actionable feedback, NOT to write or modify code. Follow the 6-step workflow adapted for review.
+这是一个只读场景。**总指挥模式**：主代理负责澄清范围、派发子代理、汇总报告；每个角色（前端架构师 / 后端架构师 / DevOps 工程师 / QA 测试工程师 / 安全工程师）由独立子代理加载对应审查 skill 并行评审。不编写或修改任何代码。
 
-## Workflow Adaptation
+## 工作流调整
 
-The 6-step workflow is read-only specific:
+6 步工作流针对只读场景：
 
-### Step 1 — Clarify
-Ask the user:
-- What code needs review? (specific files, PR, or entire directory)
-- What aspects to focus on? (architecture? correctness? security? style?)
-- Any known concerns?
+### 第 1 步 — 澄清
+询问用户：
+- 需要评审哪些代码？（具体文件、PR 或整个目录）
+- 重点评审哪些方面？（架构？正确性？安全性？风格？）
+- 是否有已知的顾虑？
 
-### Step 2 — Analyze (replaces Spec & Plan)
-Review across these dimensions:
-- **Correctness:** Logic errors, edge cases, race conditions
-- **Architecture:** Coupling, cohesion, separation of concerns
-- **Security:** Input validation, auth, data exposure
-- **Performance:** Obvious inefficiencies, N+1 queries, memory leaks
-- **Maintainability:** Readability, naming, complexity, test coverage
-- **Consistency:** Follows existing patterns and conventions
+### 第 2 步 — 派发多角色子代理评审（取代单人评审）
 
-Write review document with:
-- Summary of findings (severity: critical/major/minor/nit)
-- Specific file:line references for each finding
-- Suggested fixes (text description only — no code edits)
+1. 确定评审范围：
+   - 文件路径列表（或 git diff 范围，如 `git diff main...HEAD`）
+   - 相关规格/计划文档路径（如有）
+2. 按改动规模分级触发：
+   - 改动 ≤ 3 个文件且单领域 → 只派相关角色 + QA（如纯前端：前端架构师 + QA + 安全工程师）
+   - 跨领域或大改动 → 全部 5 角色
+   - 纯配置/文档/单行改动 → 主代理自评即可，不派子代理
+   - hotfix / prototype 场景遵循其豁免规则（hotfix 跳过多轮评审，prototype 一轮即可）
+3. 并行调用 `task` 工具（`subagent_type: general`）派发子代理，每个 prompt 包含：
+   - "以 [角色] 视角加载 [审查 skill] 评审"
+   - 评审对象：文件路径 / diff 范围 + 规格文档路径
+   - 只读要求：不修改任何文件
+   - 输出要求：按审查 skill 的输出格式返回发现报告
+4. **一致性检查**——汇总子代理报告：
+   - 统一严重级别映射（security-audit：严重→严重 / 高→严重 / 中→重要 / 低→次要 / 提示→琐碎）
+   - 每个发现必须有具体 file:line 引用
+   - 去重，按严重级别排序（严重/重要/次要/琐碎）
+5. **交叉复核（必做）**——逐条核对问题汇总内部无冲突：
+   - **修复建议冲突**：不同角色对同一问题给出矛盾的修复方向
+   - **重复/遗漏**：同一问题多角色重复提出（合并去重）；问题条目之间前后矛盾（修正）；发现未被其他角色交叉验证的条目（补验证）
+   - **裁决优先级**：以"对已有功能的影响"为最高准则；**重大分歧呈现给用户决策**
+   - **修正后复核**：对裁决修正过的问题条目，回传相关角色子代理快速确认（仅核对修正点），确认无新冲突
+6. 编写评审文档：
+   - 发现问题的摘要（严重程度：严重/重要/次要/琐碎）
+   - 每个发现的具体 file:line 引用
+   - 建议的修复方案（仅文字描述 —— 不修改代码）
 
-### Step 3 — Gate (same: ask permission)
-"Here's my review. May I present the full findings?"
+### 第 3 步 — 门禁（征求许可）
+"这是我的评审。我可以呈现全部发现吗？"
 
-### Step 4 — Not applicable (no coding)
+### 第 4 步 — 不适用（无编码）
 
-### Step 5 — Acceptance
-Present review document. Wait for user feedback.
+### 第 5 步 — 验收
+呈现评审文档。等待用户反馈。
 
-### Step 6 — Not applicable
+### 第 6 步 — 不适用
 
-## Critical Rules
+## 关键规则
 
-- **Do NOT edit any file during review**
-- **Do NOT run bash commands that modify the system**
-- Focus on patterns and principles, not line-by-line nitpicking
-- Prioritize findings that could cause production issues
+- **评审期间不得编辑任何文件**
+- **不得运行会修改系统的 bash 命令**
+- 每个角色必须由子代理按对应审查 skill 评审，主代理不做越权评审
+- 聚焦于模式和原则，而非逐行吹毛求疵
+- 优先处理可能导致生产事故的发现
 
-## Verification
+## 验证
 
-- [ ] Review covers all relevant dimensions
-- [ ] Every finding has a specific location reference
-- [ ] Severity labels are applied consistently
-- [ ] No files were modified during review
+- [ ] 子代理已按角色派发并加载对应审查 skill
+- [ ] 评审覆盖所有相关维度
+- [ ] 每个发现都有具体的 file:line 引用
+- [ ] 严重程度标签应用一致（已统一映射）
+- [ ] 已执行一致性检查 + 交叉复核（问题汇总内部无冲突）
+- [ ] 评审期间未修改任何文件

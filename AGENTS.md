@@ -4,7 +4,7 @@ This project follows a strict 6-step vibe coding workflow. You MUST follow this 
 
 ## Core Rules (Non-Negotiable)
 
-At the start of every session, invoke the `skill` tool to load `vibe-core` — it contains the complete workflow.
+At the start of every session, run `opencode /vibe` to load the `vibe-core` workflow.
 
 **Always:**
 - Start each session by loading vibe-core skill
@@ -39,6 +39,10 @@ When vibe-core's workflow tells you to load a scenario-specific skill, use the `
 | `bugfix` | Fix a bug (any layer) |
 | `refactoring` | Restructure code without changing behavior |
 | `code-review` | Review code quality |
+| `review-frontend-arch` | Frontend architecture review (subagent) |
+| `review-backend-arch` | Backend architecture review (subagent) |
+| `review-devops` | DevOps/deployment review (subagent) |
+| `review-qa` | QA/regression risk review (subagent) |
 | `prototype` | Quick proof-of-concept |
 | `integration` | Third-party integration |
 | `migration` | Tech stack or version migration |

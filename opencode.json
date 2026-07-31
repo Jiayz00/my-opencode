@@ -27,7 +27,11 @@
       "project-init": "allow",
       "prototype": "allow",
       "refactoring": "allow",
-      "security-audit": "allow"
+      "security-audit": "allow",
+      "review-frontend-arch": "allow",
+      "review-backend-arch": "allow",
+      "review-devops": "allow",
+      "review-qa": "allow"
     }
   }
 }

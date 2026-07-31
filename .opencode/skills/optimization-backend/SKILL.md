@@ -1,41 +1,48 @@
 ---
 name: optimization-backend
-description: Improve backend performance, reliability, or efficiency. Measure-first with focus on test container verification.
+description: 提升后端性能、可靠性或效率。以测量为先，重点放在测试容器验证上。
 ---
 
-# Backend Optimization
+# 后端优化
 
-## Overview
+## 概述
 
-Backend optimization follows the 6-step workflow. Key differences: baseline measurement in Step 2, staged rollout in Step 4, and test container verification in Step 5.
+后端优化遵循 6 步工作流。主要区别：第 2 步进行基线测量，第 4 步分阶段上线，第 5 步在测试容器中验证。
 
-## Step Adjustments
+## 步骤调整
 
-### Step 1 — Requirements Clarification
-Ask for:
-- What metric matters most? (latency? throughput? memory? cost?)
-- Current performance and target
-- Load patterns (concurrent users, request distribution)
-- Any constraints (must not change API contract)
+### 第 1 步 — 需求澄清
+问清楚：
+- 哪个指标最重要？（延迟？吞吐量？内存？成本？）
+- 当前性能和目标
+- 负载模式（并发用户数、请求分布）
+- 任何约束条件（不得更改 API 契约）
 
-### Step 2 — Spec & Plan
-- Baseline: profile the current system under realistic load
-- Plan must include specific optimization targets with numbers
+### 第 2 步 — 规格与计划
+- 基线：在真实负载下对当前系统进行性能分析
+- 计划必须包含带具体数字的优化目标
 
-### Step 4 — Development
-- Change one component at a time
-- Profile before moving to next optimization
-- Safe rollback strategy for each change
+### 第 3 步 — 权限门禁
+使用 `question` 工具请求许可："基线为 [指标: X]。目标为 [指标: Y]。方案：[Z]。我可以开始吗？"**未经明确许可不得编写代码。**
 
-### Step 5 — Acceptance
-- Test in test container under realistic load
-- Verify API contract unchanged
-- Present before/after metrics in user report
+### 第 4 步 — 开发
+- 一次只改一个组件
+- 进入下一个优化前先做性能分析
+- 每次更改都要有安全的回滚策略
 
-## Verification
+### 第 5 步 — 验收
+- 在测试容器中、真实负载下进行测试
+- 验证 API 契约未变
+- 在用户报告中呈现前后对比指标
 
-- [ ] Baseline metrics captured
-- [ ] Each optimization verified independently
-- [ ] API contract unchanged
-- [ ] No performance regressions in other areas
-- [ ] Test container validation passed
+### 第 6 步 — 兼容性
+- 验证优化未破坏已有 API、数据流与集成
+- 发现问题：汇总并返回第 2 步
+
+## 验证清单
+
+- [ ] 已采集基线指标
+- [ ] 每项优化都已独立验证
+- [ ] API 契约未变
+- [ ] 其他领域无性能回退
+- [ ] 测试容器验证通过

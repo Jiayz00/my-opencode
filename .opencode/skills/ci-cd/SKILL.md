@@ -14,14 +14,14 @@ description: 配置 CI/CD 流程，包括 Docker 构建、GitHub Actions、自�
 
 ## 流程
 
-### Step 1 — 需求确认
+### 第 1 步 — 需求澄清
 问清楚：
 - 用什么 CI 平台？（GitHub Actions / GitLab CI / Jenkins）
 - 要自动化什么？（构建？测试？部署？）
 - 部署目标？（服务器 / Docker Hub / 云平台）
 - 现有构建命令是什么？
 
-### Step 2 — 方案
+### 第 2 步 — 规格与计划
 
 **质量门禁管道（Quality Gate Pipeline）：**
 
@@ -57,17 +57,46 @@ PR 提交
 - 部署策略（预览部署 / 灰度发布 / 直接部署）
 - 回滚方案
 
-### Step 3 — 门禁
+### 第 3 步 — 权限门禁
 question: "CI 方案已写好。需要的 Secrets 有：[列表]。请先在 GitHub 设置好这些 Secrets，然后我开始实施。可以吗？"
 
-### Step 4 — 实施
+### 第 4 步 — 开发
 - 创建配置文件（`.github/workflows/`、`Dockerfile` 等）
 - 每个配置写好后模拟验证语法
 - 推送后实际验证 CI 是否通过
 
+**合并集成验证（多 PR 并发时的关键兜底）：**
+
+1. 工作流同时监听 PR 和 main：
+   ```yaml
+   on:
+     pull_request:
+     push:
+       branches: [main]
+   ```
+   - `pull_request` 事件：每个 PR 的合并前代码跑测试
+   - `push` 到 main：合并后的真实代码再跑一遍全量测试——两个 PR 单独通过但合在一起出错的情况，在这里暴露
+
+2. 进阶：配置 **Merge Queue**（GitHub Repo Settings → Branches → Require merge queue）
+   - 多个 PR 按序排队，每个都用最新 main 合并后状态测试
+   - 通过才真正合入，集成问题在合并前被拦截
+   - 适合 PR 合并频率高的项目
+
+3. 分支保护要求：
+   - **Require status checks to pass before merging** — CI 不通过不能合并
+   - **Require branches to be up to date** — 强制 PR 同步最新 main，减少冲突和隐藏集成问题
+
 ### 验收
 - CI 流水线实际运行一次，全部通过
 - 如果失败：排查修复，重新推送
+
+## 验证清单
+
+- [ ] CI 管道实际运行一次并全部通过
+- [ ] Secrets 未写入任何文件，使用平台 Secrets 管理
+- [ ] 管道含质量门禁关卡（lint → 类型 → 单测 → 构建 → 集成 → 安全）
+- [ ] 每次部署有回滚手段
+- [ ] CI 日志无敏感信息（已用遮蔽功能）
 
 ### CI 失败反馈循环
 

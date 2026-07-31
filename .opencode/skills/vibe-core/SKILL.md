@@ -1,329 +1,367 @@
 ---
 name: vibe-core
-description: Master 6-step vibe coding workflow. Always load this first. Routes to scenario-specific skills based on task type. Use for any software development task.
+description: 掌握 6 步 vibe 编码工作流。始终首先加载本技能。根据任务类型路由到特定场景技能。适用于任何软件开发任务。
 ---
 
-# Vibe Core Workflow
+# Vibe 核心工作流
 
-## Overview
+## 概述
 
-This is the master workflow for all development. It enforces a strict 6-step loop: **Clarify → Plan → Gate → Build → Verify → Ship**. Every session starts here.
+这是所有开发的主工作流。它强制执行严格的 6 步循环：**澄清 → 计划 → 门禁 → 构建 → 验证 → 交付**。每次会话都从这里开始。
 
-The workflow is a state machine. Each step has an entry condition, a process, and an exit condition. If any step fails its checks, you return to an earlier step as specified.
+该工作流是一个状态机。每个步骤都有进入条件、过程和退出条件。如果任何步骤未通过检查，则按指定规则返回较早的步骤。
 
 ```
-Step 1: ┌──────────────────────────────────────┐
-         │  Requirements Clarification         │
-         │  Use `question` to confirm needs    │
+第 1 步：┌──────────────────────────────────────┐
+         │  需求澄清                            │
+         │  使用 `question` 确认需求            │
          └──────────────┬───────────────────────┘
                         ▼
-Step 2: ┌──────────────────────────────────────┐
-         │  Spec & Plan Document                │
-         │  3+ rounds multi-role review         │
-         │  Optimize based on findings          │
+第 2 步：┌──────────────────────────────────────┐
+         │  规格与计划文档                      │
+         │  6 角色多轮评审                      │
+         │  根据发现的问题进行优化              │
          └──────────────┬───────────────────────┘
                         ▼
-Step 3: ┌──────────────────────────────────────┐
-         │  Permission Gate                     │
-         │  Use `question` — "may I begin?"     │
-         |  NO CODING without explicit yes      │
+第 3 步：┌──────────────────────────────────────┐
+         │  权限门禁                            │
+         │  使用 `question` —— "我可以开始了吗？"│
+         │  未经明确同意不得编写任何代码        │
          └──────────────┬───────────────────────┘
                         ▼
-Step 4: ┌──────────────────────────────────────┐
-         │  Development & Review                │
-         │  Code → Review → Verify              │
-         │  Issues? → go to Step 2              │
-         │  Clean? → proceed                    │
+第 4 步：┌──────────────────────────────────────┐
+         │  开发与评审                          │
+         │  编码 → 多角色评审 → 验证            │
+         │  发现问题？→ 返回第 2 步              │
          └──────────────┬───────────────────────┘
                         ▼
-Step 5: ┌──────────────────────────────────────┐
-         │  Acceptance Testing                  │
-         │  Frontend: local start → user verify │
-         │  Fullstack: test container → user OK │
-         │  Issues? → go to Step 4 or Step 2    │
+第 5 步：┌──────────────────────────────────────┐
+         │  验收测试                            │
+         │  前端：本地启动 → 用户验证           │
+         │  全栈：测试容器 → 用户确认           │
+         │  发现问题？→ 返回第 4 步或第 2 步     │
          └──────────────┬───────────────────────┘
                         ▼
-Step 6: ┌──────────────────────────────────────┐
-         │  Compatibility Testing               │
-         │  `question` gate before starting     │
-         │  Full-stack regression in container  │
-         │  Issues? → go to Step 2              │
+第 6 步：┌──────────────────────────────────────┐
+         │  兼容性测试                          │
+         │  开始前需通过 `question` 门禁        │
+         │  在容器中执行全栈回归测试            │
+         │  发现问题？→ 返回第 2 步              │
          └──────────────────────────────────────┘
 ```
 
-## When to Use
+## 使用时机
 
-Use this skill at the start of EVERY session. It is the entry point for all scenarios — the scenario-specific skills provide detailed adjustments for each case, but the core 6-step structure never changes.
+在每次会话开始时使用本技能。它是所有场景的入口 —— 场景特定技能为每种情况提供详细调整，但核心 6 步结构永不改变。
 
-## Context: How Scenario Skills Work
+## 背景：场景技能如何运作
 
-This workflow references scenario-specific skills. When you encounter a reference like `→ load skill: feature-dev-frontend`, use the `skill` tool to load it. The scenario skill will provide specific adjustments to the generic 6-step flow for that case.
+本工作流会引用场景特定技能。当遇到类似 `→ 加载技能: feature-dev-frontend` 的引用时，使用 `skill` 工具加载它。场景技能会为该场景提供对通用 6 步流程的特定调整。
 
-Scenarios fall into categories:
+场景分为以下类别：
 
-| Category | Example Skills | Flow Adjustments |
+| 类别 | 示例技能 | 流程调整 |
 |----------|---------------|------------------|
-| **Development** | feature-dev-frontend, -backend, -fullstack, bugfix, refactoring | Full 6-step, heavy on Step 2 & 4 |
-| **Optimization** | optimization-frontend, -backend | Step 5 emphasis (local start + user acceptance) |
-| **Review** | code-review, security-audit | Read-only (Step 4 is analysis, not coding) |
-| **Infrastructure** | project-init, database-change, migration, dependency-update | Step 5 & 6 vary (may skip container testing) |
-| **Integration** | integration | Full 6-step, emphasis on contract verification & error handling |
-| **Experimental** | prototype | Step 2 lightweight, Steps 5-6 skippable |
-| **Emergency** | hotfix | Abbreviated flow (skip Step 2, Step 3 may be bypassed) |
-| **Infrastructure-light** | ci-cd, docs | Steps 1-4 only, simplified acceptance (no container testing) |
-| **Decision** | architecture | Steps 1-3 only (discussion + ADR, no coding) |
-| **Cross-cutting** | acceptance-frontend, acceptance-fullstack, compatibility-test | Focused on Step 5 & 6 only |
+| **开发** | feature-dev-frontend、-backend、-fullstack、bugfix、refactoring | 完整 6 步，重点在第 2 步和第 4 步 |
+| **优化** | optimization-frontend、-backend | 强调第 5 步（本地启动 + 用户验收） |
+| **评审** | code-review、security-audit、review-frontend-arch、review-backend-arch、review-devops、review-qa | 只读（第 4 步是分析，而非编码）；多角色评审由子代理执行 |
+| **基础设施** | project-init、database-change、migration、dependency-update | 第 5 步和第 6 步有所变化（可能跳过容器测试） |
+| **集成** | integration | 完整 6 步，强调契约验证与错误处理 |
+| **实验性** | prototype | 第 2 步精简，第 5-6 步可跳过 |
+| **紧急** | hotfix | 简化流程（第 2 步精简为 3-5 行计划，跳过多轮评审，第 3 步门禁保留） |
+| **轻量基础设施** | ci-cd、docs | 仅第 1-4 步，简化验收（无容器测试） |
+| **决策** | architecture | 仅第 1-3 步（讨论 + ADR，无编码） |
+| **横切** | acceptance-frontend、acceptance-fullstack、compatibility-test | 仅专注于第 5 步和第 6 步 |
 
-## Process
+## 流程
 
-### Step 1: Requirements Clarification
+### 第 1 步：需求澄清
 
-**Entry condition:** A task request has been received.
+**进入条件：** 已收到任务请求。
 
-**Process:**
+**过程：**
 
-1. If requirements are unclear, vague, or underspecified, use the `question` tool to ask targeted questions. Do NOT make assumptions.
-2. Ask one question at a time. Wait for the answer before asking the next.
-3. After clarification, restate your understanding to confirm alignment.
-4. Load the appropriate scenario skill based on the task type.
-
-```
-ASSESMENT: what kind of task is this?
-- New feature: frontend / backend / fullstack?
-- Bug fix?
-- Optimization?
-- Something else?
-```
-
-5. Once the scenario is identified, load the scenario skill: `skill({ name: "<scenario-name>" })`
-
-**Exit condition:** Requirements are confirmed. Scenario skill is loaded.
-
-### Step 2: Spec & Plan
-
-**Entry condition:** Requirements are confirmed and documented.
-
-**Process:**
-
-1. **Write spec document** covering:
-   - Objective and success criteria
-   - Architecture / approach
-   - Files to be changed
-   - Dependencies and risks
-
-2. **Write task plan** — break work into verifiable units. Each task must have:
-   - Clear acceptance criteria
-   - Verification step (test command, build check, manual test)
-   - File list
-
-3. **Multi-role review (3+ rounds):** Conduct at least 3 review rounds from different perspectives:
-   - **Round 1 — Architecture:** Is the approach sound? Any design issues?
-   - **Round 2 — Detailed:** Are there edge cases? Missing details? Implementation-level concerns?
-   - **Round 3 — User/Experience:** Does this match what the user asked for? Any UX concerns?
-
-   For each round:
-   - Self-review the document against the given perspective
-   - Document findings
-   - Fix issues found
-   - Move to next round
-
-4. **Optimize** the spec/plan based on all review findings.
-
-**Exit condition:** Spec and plan are written, reviewed (3+ rounds), and saved to files.
-
-### Step 3: Permission Gate
-
-**Entry condition:** Spec and plan are finalized.
-
-**Process:**
-
-1. Use the `question` tool to ask the user for explicit permission to start coding.
-2. Present a summary of what will be done: "I will implement [X] by modifying [files] using [approach]. May I begin?"
-3. **Do NOT write any code until permission is explicitly granted.**
-4. If the user says no, return to Step 1 or Step 2 as appropriate.
-
-**Exit condition:** User has explicitly approved starting implementation.
-
-### Step 4: Development & Review
-
-**Entry condition:** User has granted permission to code.
-
-**Process:**
-
-1. **Implement** following the plan. Work incrementally — one task at a time, one file at a time.
-2. After implementation, **self-review** the code:
-   - Does it match the spec?
-   - Are there edge cases?
-   - Is it consistent with existing code style?
-   - Are there security concerns?
-3. **Verify** — run the relevant commands (build, test, lint) to confirm the code works.
-4. If issues are found:
-   - Collect all issues into a summary
-   - Analyze root causes
-   - Return to Step 2 (update spec/plan, fix approach)
-5. If no issues: proceed to Step 5.
-
-**Exit condition:** Code passes self-review and verification. No unresolved issues.
-
-### Step 5: Acceptance Testing
-
-**Entry condition:** Implementation passes verification. No known issues.
-
-**Process depends on scenario type:**
-
-**For frontend optimization/UI work:**
-1. Start local dev server
-2. Self-test the feature — confirm it works end-to-end
-3. If issues found, return to Step 4
-4. Use `question` tool to report to user:
-   - What was built
-   - How to access it (local URL)
-   - What to look for
-5. Wait for user acceptance
-6. If user reports issues or new requests, return to Step 1
-
-**For full-stack features:**
-1. Deploy to test container environment
-2. Run verification tests
-3. If issues found, collect and return to Step 2
-4. Use `question` tool to report to user:
-   - What was built
-   - Test environment URL
-   - What to verify
-5. Wait for user acceptance
-6. If user reports issues or new requests, return to Step 1
-
-**Exit condition:** User has accepted the implementation via `question` tool.
-
-### Step 6: Compatibility Testing
-
-**Entry condition:** Step 5 acceptance is complete.
-
-**Process:**
-
-1. **Gate:** Use `question` tool to ask user for permission to start compatibility testing.
-   - "Compatibility testing will verify that the new changes don't break existing functionality across frontend, backend, and their integration. May I proceed?"
-2. Only proceed after explicit permission.
-3. Run full-stack regression tests in the test container.
-4. Test areas:
-   - Frontend: existing pages/components still work
-   - Backend: existing APIs/routes still work
-   - Integration: frontend-backend connectivity
-   - Data: no data loss or corruption
-5. If issues found:
-   - Collect and summarize
-   - Return to Step 2
-6. If clean: report results.
-
-**Exit condition:** Compatibility testing passes or issues are routed back to Step 2.
-
-## Sensitive Information Handling
-
-Server credentials, API keys, and database passwords are sensitive. The following rules apply whenever you need server access.
-
-### Preferred: SSH Config Alias
-
-If the user has `~/.ssh/config` configured with a host alias, use it directly. This is the most secure approach — no credentials touch the project files at all.
+1. 如果需求不清晰、模糊或说明不足，使用 `question` 工具提出有针对性的问题。不得做出假设。
+2. 一次只问一个问题。等待回答后再问下一个。
+3. 澄清之后，复述你的理解以确认双方一致。
+4. 根据任务类型加载相应的场景技能。
 
 ```
-Example ~/.ssh/config:
+评估：这是什么类型的任务？
+- 新功能：前端 / 后端 / 全栈？
+- 缺陷修复？
+- 优化？
+- 其他？
+```
+
+5. 一旦确定场景，加载场景技能：`skill({ name: "feature-dev-*" })`（以实际场景技能名替换）。
+
+**退出条件：** 需求已确认。场景技能已加载。
+
+### 第 2 步：规格与计划
+
+**进入条件：** 需求已确认并记录在案。
+
+**过程：**
+
+1. **编写规格文档**，涵盖：
+   - 目标与成功标准
+   - 架构 / 方案
+   - 需要修改的文件
+   - 依赖项与风险
+
+2. **编写任务计划** —— 将工作分解为可验证的单元。每个任务必须具备：
+   - 明确的验收标准
+   - 验证步骤（测试命令、构建检查、手动测试）
+   - 文件清单
+
+3. **多角色评审**（对象：规格/计划）—— 按下方[多角色评审公共节](#多角色评审子代理执行)执行：6 角色（含用户/体验），子代理各自加载审查 skill 评审规格/计划，回答 **"本次修改会不会影响已有的功能？"**
+
+4. 根据所有评审发现**优化**规格/计划，并执行公共节的**一致性检查 + 交叉复核 + 修正后复核**，确保最终方案文档的章节之间（架构方案 / 文件清单 / 任务计划 / 验收标准）无冲突。
+
+**退出条件：** 规格和计划已编写、经过 6 角色评审与交叉复核并保存到文件。
+
+### 第 3 步：权限门禁
+
+**进入条件：** 规格和计划已定稿。
+
+**过程：**
+
+1. 使用 `question` 工具向用户请求明确许可以开始编码。
+2. 呈现将要执行的工作摘要："我将通过修改 [文件] 并采用 [方案] 来实现 [X]。我可以开始吗？"
+3. **在获得明确许可之前不得编写任何代码。**
+4. 如果用户拒绝，视情况返回第 1 步或第 2 步。
+
+**退出条件：** 用户已明确批准开始实现。
+
+### 第 4 步：开发与评审
+
+**进入条件：** 用户已授予编码许可。
+
+**过程：**
+
+1. 按照计划**实现**。增量式工作 —— 一次一个任务，一次一个文件。
+2. 实现后，**自评**代码：
+   - 是否符合规格？
+   - 是否存在边界情况？
+   - 是否与现有代码风格一致？
+   - 是否存在安全隐患？
+3. **多角色代码评审**（对象：代码改动）—— 按下方[多角色评审公共节](#多角色评审子代理执行)执行：5 角色子代理评审代码 diff，回答 **"本次修改会不会影响已有的功能？"**。按改动规模分级触发：
+   - 改动 ≤ 3 个文件且单领域 → 只派相关角色 + QA（如纯前端：前端架构师 + QA + 安全工程师）
+   - 跨领域或大改动 → 全部 5 角色
+   - 纯配置/文档/单行改动 → 自评即可，不派子代理
+   - hotfix / prototype 场景遵循其豁免规则
+4. 按公共节执行**一致性检查 + 交叉复核**（问题汇总去重、冲突裁决、修正后复核），确认问题汇总无冲突后修复问题（小修直接改；需要调整方案/范围时返回第 2 步）。
+5. **验证** —— 运行相关命令（构建、测试、lint）确认代码可用。
+6. **重审判定**：修复后改动面大 → 重跑相关角色；小修 → 自验即可，避免无限循环。
+7. 如果问题需要调整规格/计划：返回第 2 步。
+8. 如果没有问题：进入第 5 步。
+
+**退出条件：** 代码通过多角色评审和验证，问题汇总经交叉复核无冲突。没有未解决的问题。
+
+### 第 5 步：验收测试
+
+**进入条件：** 实现通过验证。没有已知问题。
+
+**过程取决于场景类型：**
+
+**针对前端优化/UI 工作：**
+1. 启动本地开发服务器
+2. 自测功能 —— 确认其端到端可用
+3. 如果发现问题，返回第 4 步
+4. 使用 `question` 工具向用户报告：
+   - 构建了什么
+   - 如何访问（本地 URL）
+   - 需要关注什么
+5. 等待用户验收
+6. 如果用户反馈问题或新需求，返回第 1 步
+
+**针对全栈功能：**
+1. 部署到测试容器环境
+2. 运行验证测试
+3. 如果发现问题，汇总并返回第 2 步
+4. 使用 `question` 工具向用户报告：
+   - 构建了什么
+   - 测试环境 URL
+   - 需要验证什么
+5. 等待用户验收
+6. 如果用户反馈问题或新需求，返回第 1 步
+
+**退出条件：** 用户已通过 `question` 工具接受实现。
+
+### 第 6 步：兼容性测试
+
+**进入条件：** 第 5 步验收已完成。
+
+**过程：**
+
+1. **门禁：** 使用 `question` 工具向用户请求开始兼容性测试的许可。
+   - "兼容性测试将验证新改动不会破坏前端、后端及其集成层面的现有功能。我可以开始吗？"
+2. 只有在获得明确许可后才能继续。
+3. 在测试容器中运行全栈回归测试。
+4. 测试范围：
+   - 前端：现有页面/组件仍然可用
+   - 后端：现有 API/路由仍然可用
+   - 集成：前后端连通性
+   - 数据：无数据丢失或损坏
+5. 如果发现问题：
+   - 汇总问题
+   - 返回第 2 步
+6. 如果没有问题：报告结果。
+
+**退出条件：** 兼容性测试通过，或问题已返回到第 2 步处理。
+
+### 多角色评审（子代理执行）
+
+**适用时机与角色：**
+
+| 时机 | 评审对象 | 角色 |
+|------|---------|------|
+| 第 2 步（规格评审） | 规格/计划文档 | 6 角色（含用户/体验） |
+| 第 4 步（代码评审） | 代码改动 diff | 5 角色（用户/体验不派发） |
+
+**角色表：**
+
+| 角色 | 审查 skill | 评审重点 |
+|------|-----------|---------|
+| 前端架构师 | `review-frontend-arch` | 前端方案、组件结构、是否影响已有页面 |
+| 后端架构师 | `review-backend-arch` | API、数据模型、是否影响已有接口 |
+| DevOps 工程师 | `review-devops` | 部署、CI/CD、环境配置 |
+| QA 测试工程师 | `review-qa` | 测试覆盖、边界情况、回归风险 |
+| 安全工程师 | `security-audit` | 漏洞、凭据、数据保护 |
+| 用户/体验 | 无 skill（直接评审） | 需求符合度、UX（仅规格评审） |
+
+每个角色都要回答：**"本次修改会不会影响已有的功能？"**
+
+**执行方式（并行派出子代理）：**
+
+1. 为每个审查角色调用一次 `task` 工具（`subagent_type: general`），并行派出。
+2. 子代理 prompt 中给出：
+   - 角色与要加载的审查 skill（"以 [角色] 视角加载 [审查 skill] 评审"）
+   - 评审对象路径：规格/计划文件路径（规格评审）；或 git diff 范围 + 相关文件路径 + 规格文档路径（代码评审）
+   - 只读要求：不修改任何文件、不运行会修改系统的命令
+   - 输出要求：按审查 skill 的输出格式返回发现报告
+3. 子代理返回发现报告后，**一致性检查**：
+   - 统一严重级别映射（security-audit：严重→严重 / 高→严重 / 中→重要 / 低→次要 / 提示→琐碎）
+   - 代码评审的发现必须带 file:line 引用
+   - 去重，按严重级别排序
+4. **交叉复核（必做）**——逐条核对所有角色的发现与修正意见，确保最终输出内部无冲突：
+   - **修复建议冲突**：不同角色对同一问题给出矛盾的修复方向（如前端坚持方案 A、后端要求保持 B）
+   - **方案/范围冲突**：Step 2 中各角色对规格的修改意见互相矛盾（如架构方案与任务计划不一致、验收标准与文件清单矛盾）；Step 4 中问题列表前后矛盾
+   - **重复/遗漏**：同一问题多角色重复提出（合并去重）；某角色发现未被其他角色交叉验证（补验证）
+   - **裁决优先级**：以"对已有功能的影响"为最高准则；**重大分歧呈现给用户决策**
+5. **修正后复核**：按裁决修正规格/计划（Step 2）或代码（Step 4）后，将修正点回传相关角色子代理快速确认（仅核对修正点，不重跑全量）；确认无新冲突方可进入下一步。
+6. 记录并修复发现的问题。
+7. 涉及单一领域（如纯前端改动）时，不相关角色做快速检查即可，但**影响评估不能跳过**——重点是"本次修改会不会破坏已有功能"。
+
+## 敏感信息处理
+
+服务器凭据、API 密钥和数据库密码均属敏感信息。无论何时需要访问服务器，都必须遵守以下规则。
+
+### 首选方案：SSH 配置别名
+
+如果用户的 `~/.ssh/config` 配置了主机别名，直接使用它。这是最安全的方式 —— 凭据完全不接触项目文件。
+
+```
+示例 ~/.ssh/config:
 Host test-server
-    HostName 192.168.1.100
+    HostName 198.51.100.10
     User deploy
     IdentityFile ~/.ssh/test_key
     Port 22
 
-→ Agent uses: ssh test-server "docker-compose up -d"
+→ 智能体使用: ssh test-server "docker-compose up -d"
 ```
 
-The SSH alias is stored in the project AGENTS.md (e.g., "Test server alias: test-server"). This is NOT sensitive — it's just a label. The actual credentials stay in the user's private `~/.ssh/config`.
+SSH 别名存储在项目的 AGENTS.md 中（例如"测试服务器别名: test-server"）。这不属于敏感信息 —— 它只是一个标签。实际凭据保存在用户私有的 `~/.ssh/config` 中。
 
-### Fallback: Environment Variables
+### 备选方案：环境变量
 
-Use these when SSH config is not available. NEVER written into skill files.
+当 SSH 配置不可用时使用这些变量。绝不能写入技能文件。
 
-| Variable | Purpose | Example |
+| 变量 | 用途 | 示例 |
 |----------|---------|---------|
-| `OPENCODE_TEST_HOST` | Test server hostname/IP | `192.168.1.100` |
-| `OPENCODE_TEST_USER` | SSH user | `deploy` |
-| `OPENCODE_TEST_KEY` | Path to SSH private key | `~/.ssh/test_server_ed25519` |
-| `OPENCODE_TEST_PORT` | SSH port (default 22) | `2222` |
-| `OPENCODE_TEST_DIR` | Deployment directory on server | `/opt/test-app` |
+| `OPENCODE_TEST_HOST` | 测试服务器主机名/IP | `198.51.100.10` |
+| `OPENCODE_TEST_USER` | SSH 用户 | `deploy` |
+| `OPENCODE_TEST_KEY` | SSH 私钥路径 | `~/.ssh/test_server_ed25519` |
+| `OPENCODE_TEST_PORT` | SSH 端口（默认 22） | `2222` |
+| `OPENCODE_TEST_DIR` | 服务器上的部署目录 | `/opt/test-app` |
 
-### How to Use
+### 使用方法
 
-1. **Check for env vars first:**
+1. **先检查环境变量：**
    ```
-   OPENCODE_TEST_HOST is set? → use it
-   OPENCODE_TEST_USER is set? → use it
-   OPENCODE_TEST_KEY is set? → use it in SSH commands
+   OPENCODE_TEST_HOST 已设置？→ 使用它
+   OPENCODE_TEST_USER 已设置？→ 使用它
+   OPENCODE_TEST_KEY 已设置？→ 在 SSH 命令中使用它
    ```
 
-2. **If missing, use `question` to ask the user:**
-   - Ask ONE variable at a time
-   - Do NOT display the value back after receiving it
-   - Use it immediately in bash commands, never save to a file
-   - If the user provides a password (not key), use SSH_ASKPASS or expect-like patterns
+2. **如果缺失，使用 `question` 向用户询问：**
+   - 一次只问一个变量
+   - 收到后不得在对话中回显该值
+   - 立即在 bash 命令中使用，绝不保存到文件
+   - 如果用户提供的是密码（而非密钥），使用 SSH_ASKPASS 或类似 expect 的模式
 
-3. **Example SSH command pattern:**
+3. **示例 SSH 命令模式：**
    ```bash
    ssh -i %OPENCODE_TEST_KEY% %OPENCODE_TEST_USER%@%OPENCODE_TEST_HOST% -p %OPENCODE_TEST_PORT% "docker ps"
    ```
 
-4. **Never:**
-   - Hardcode IPs, usernames, passwords, or keys in any file
-   - Save credentials to project files or AGENTS.md
-   - Echo credentials back in the conversation
-   - Commit credential-related files
+4. **绝不：**
+   - 在任何文件中硬编码 IP、用户名、密码或密钥
+   - 将凭据保存到项目文件或 AGENTS.md
+   - 在对话中回显凭据
+   - 提交与凭据相关的文件
 
-### Server Operations Safety
+### 服务器操作安全
 
-When deploying to test containers via SSH:
-- Ask permission before any SSH connection (Step 3/Step 6 gates cover this)
-- Verify the target is the TEST container, not production
-- If unsure about the environment, stop and ask via `question`
+通过 SSH 部署到测试容器时：
+- 任何 SSH 连接前都要征求许可（第 3 步/第 6 步门禁已涵盖）
+- 确认目标是测试容器，而非生产环境
+- 如果对环境不确定，停下来并通过 `question` 询问
 
-## Loop-Back Rules
+## 回环规则
 
-| Situation | Return To | Why |
+| 情况 | 返回至 | 原因 |
 |-----------|-----------|-----|
-| Requirements change mid-session | Step 1 | Must re-clarify |
-| Spec review finds issues | Step 2 | Fix the plan first |
-| User says no at Step 3 gate | Step 1 or 2 | Depending on what's wrong |
-| Code review finds issues | Step 2 | Fix the spec/plan first |
-| Acceptance testing fails | Step 4 or Step 2 | Minor: Step 4; Major: Step 2 |
-| User requests changes during acceptance | Step 1 | Treat as new requirement |
-| Compatibility testing fails | Step 2 | Spec/plan needs revision |
+| 会话中途需求变更 | 第 1 步 | 必须重新澄清 |
+| 规格评审发现问题 | 第 2 步 | 先修复计划 |
+| 用户在第 3 步门禁拒绝 | 第 1 步或第 2 步 | 取决于问题所在 |
+| 代码评审发现问题 | 第 4 步或第 2 步 | 小修直接改：第 4 步；需调整方案/范围：第 2 步 |
+| 验收测试失败 | 第 4 步或第 2 步 | 小问题：第 4 步；大问题：第 2 步 |
+| 验收期间用户要求变更 | 第 1 步 | 视为新需求 |
+| 兼容性测试失败 | 第 2 步 | 规格/计划需要修订 |
 
-## Common Rationalizations
+## 常见借口
 
-| Rationalization | Reality |
+| 借口 | 现实 |
 |----------------|---------|
-| "This is simple, I don't need to ask questions" | Simple tasks still need confirmation. One question saves rework. |
-| "I'll write tests later" | Later never comes. Verification must happen now. |
-| "The user said yes to coding, so I'll just build it all" | Step 4 still requires review and verification. Permission is not a blank check. |
-| "I know what they want, I don't need Step 1" | Wrong. Use `question` to confirm. Always. |
-| "One round of review is enough" | The spec requires 3+ rounds from different angles. |
-| "Compatibility testing is too heavy for this change" | Follow the scenario skill. If it says compatibility testing, do it. |
-| "It looks right" | Looks right is not evidence. Run the tests. |
+| "这很简单，我不需要问问题" | 简单的任务也需要确认。一个问题能省去返工。 |
+| "我以后再写测试" | 以后永远不会到来。验证必须现在就做。 |
+| "用户已经同意编码，那我就全建了" | 第 4 步仍需要评审和验证。许可不是空白支票。 |
+| "我知道他们想要什么，不需要第 1 步" | 错。使用 `question` 确认。始终如此。 |
+| "评审一轮就够了" | 规格要求 6 个角色视角逐一评审。 |
+| "这个改动做兼容性测试太重了" | 遵循场景技能。如果它说要兼容性测试，就去做。 |
+| "看起来没问题" | 看起来没问题不是证据。运行测试。 |
 
-## Red Flags
+## 危险信号
 
-- Writing code before clarifying requirements
-- Skipping the permission gate (Step 3)
-- Not using `question` tool when the workflow says to
-- Making assumptions about what the user wants
-- Proceeding after finding issues without going back to Step 2
-- Accepting "seems right" as verification
-- Not loading the appropriate scenario skill
+- 在澄清需求之前就编写代码
+- 跳过权限门禁（第 3 步）
+- 工作流要求使用 `question` 工具时没有使用
+- 对用户的需求做假设
+- 发现问题后不返回第 2 步继续推进
+- 把"看起来没问题"当作验证
+- 没有加载相应的场景技能
 
-## Verification
+## 验证
 
-Before declaring a task complete:
+在宣布任务完成之前：
 
-- [ ] All 6 steps were followed in order
-- [ ] `question` tool was used at every gate
-- [ ] Spec/plan exists and had 3+ review rounds
-- [ ] Code was verified by running actual commands
-- [ ] User accepted the result
-- [ ] Compatibility testing passed or was explicitly handled
+- [ ] 按顺序走完所有 6 个步骤
+- [ ] 每个门禁处都使用了 `question` 工具
+- [ ] 规格/计划已存在且经过 6 角色评审
+- [ ] 代码已通过多角色评审（按分级触发规则）
+- [ ] 通过运行实际命令验证了代码
+- [ ] 用户已接受结果
+- [ ] 兼容性测试已通过或已明确处理

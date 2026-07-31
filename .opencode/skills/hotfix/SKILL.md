@@ -1,60 +1,60 @@
 ---
 name: hotfix
-description: Emergency production fix. Abbreviated workflow — speed is critical but quality gates are maintained at minimum viable level.
+description: 紧急生产环境修复。精简版流程 —— 速度至关重要，但质量门禁仍保持在最低可行水平。
 ---
 
-# Hotfix
+# 热修复
 
-## Overview
+## 概述
 
-Hotfixes are for production emergencies where normal process would cause unacceptable delay. The workflow is abbreviated but NOT skipped. Every step happens — just faster.
+热修复用于生产环境紧急情况，此时常规流程会造成不可接受的延迟。流程会被精简但绝不会被跳过。每一步都会执行 —— 只是更快。
 
-## Workflow Adaptation
+## 流程适配
 
-### Step 1 — Clarify
-Quick confirmation only:
-- What's broken?
-- Where (which environment, which users)?
-- Severity (how many users affected, revenue impact)?
-- Time sensitivity (how fast does this need to ship)?
+### 第 1 步 — 澄清
+仅需快速确认：
+- 哪里出了问题？
+- 在哪里（哪个环境、哪些用户）？
+- 严重程度（影响多少用户、营收影响）？
+- 时间紧迫性（需要多快上线）？
 
-### Step 2 — Spec & Plan (Abbreviated)
-- Identify root cause quickly
-- Design minimal fix (the smallest change that resolves the emergency)
-- Write 3-5 line plan
-- **Skip multi-round review** — one quick self-review is sufficient
+### 第 2 步 — 规格与计划（精简版）
+- 快速定位根因
+- 设计最小修复（能解决紧急情况的最小改动）
+- 写 3-5 行的计划
+- **跳过多轮评审** —— 一次快速的自我检查即可
 
-### Step 3 — Permission Gate
-Present: "Production issue: [what's broken]. Root cause: [identified]. Fix: [minimal change]. Estimated risk: [low/medium/high]. May I deploy?"
+### 第 3 步 — 权限门禁
+说明："生产环境问题：[哪里出了问题]。根因：[已定位]。修复方案：[最小改动]。预估风险：[低/中/高]。是否可以部署？"
 
-### Step 4 — Development
-- Smallest possible change
-- Test the fix locally
-- Do NOT refactor or improve surrounding code
-- Document any technical debt introduced
+### 第 4 步 — 开发
+- 尽可能小的改动
+- 本地测试修复
+- 不要重构或改进周边代码
+- 记录引入的任何技术债务
 
-### Step 5 — Acceptance
-- Deploy to production
-- Verify the fix resolves the issue in production
-- Monitor for 15-30 minutes after deploy
+### 第 5 步 — 验收
+- 部署到生产环境
+- 验证修复在生产环境中解决了问题
+- 部署后监控 15-30 分钟
 
-### Step 6 — Post-mortem
-After the emergency is resolved:
-- Create a follow-up task for proper root cause analysis
-- Schedule the "real" fix (if the hotfix was temporary)
-- Document what happened
+### 第 6 步 — 事后复盘
+紧急情况解决后：
+- 创建跟进任务，进行正式的根因分析
+- 安排"真正的"修复（如果热修复只是临时方案）
+- 记录发生的事情
 
-## Common Rationalizations
+## 常见借口
 
-| Rationalization | Reality |
-|----------------|---------|
-| "It's production, I'll skip the check" | Production is exactly when you need the check. |
-| "I'll fix it properly later" | You won't. Create a ticket now. |
-| "The root cause is obvious" | Verify first. Obvious != correct. |
+| 借口 | 现实 |
+|------|------|
+| "这是生产环境，我就不检查了" | 恰恰是在生产环境才更需要检查。 |
+| "我以后会好好修的" | 你不会的。现在就创建工单。 |
+| "根因很明显" | 先验证。明显不等于正确。 |
 
-## Verification
+## 验证清单
 
-- [ ] Fix resolves the reported issue in production
-- [ ] No new issues introduced (monitored)
-- [ ] Follow-up ticket created for proper RCA
-- [ ] Temporary workarounds are documented
+- [ ] 修复在生产环境中解决了报告的故障
+- [ ] 未引入新问题（已监控）
+- [ ] 已为正式的根因分析创建跟进工单
+- [ ] 临时性规避方案已记录

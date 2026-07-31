@@ -1,52 +1,52 @@
 ---
 name: acceptance-frontend
-description: Frontend acceptance verification after development is complete. User-driven browser testing with structured reporting.
+description: 开发完成后的前端验收验证。由用户驱动的浏览器测试，并带有结构化报告。
 ---
 
-# Frontend Acceptance
+# 前端验收
 
-## Overview
+## 概述
 
-This is a focused acceptance workflow triggered after Step 4 (development) passes. It handles the frontend-specific acceptance path from Step 5 of the core workflow.
+这是在第 4 步（开发）通过后触发的专项验收工作流。它处理核心工作流第 5 步中前端特定的验收路径。
 
-## When to Use
+## 使用时机
 
-Use this when the core workflow's Step 5 requires frontend acceptance testing. This is typically after a frontend feature, optimization, or bug fix.
+当核心工作流的第 5 步需要前端验收测试时使用。通常是在前端功能、优化或缺陷修复之后。
 
-## Process
+## 流程
 
-### 1. Pre-Check
-- Build passes with no errors
-- Dev server starts without issues
-- All automated tests pass
+### 1. 预检查
+- 构建无错误通过
+- 开发服务器正常启动
+- 所有自动化测试通过
 
-### 2. Local Start
-- Start the local dev server (`npm run dev` or equivalent)
-- Verify the feature works in the browser
-- Check: correct rendering, interactions, data display, error states
+### 2. 本地启动
+- 启动本地开发服务器（`npm run dev` 或等效命令）
+- 在浏览器中验证功能可用
+- 检查：正确渲染、交互、数据展示、错误状态
 
-### 3. Self-Verification
-- Run through the acceptance criteria from the spec
-- Note any issues found
-- If issues found:
-  - Minor: fix directly, re-verify
-  - Major: report via `question`, return to Step 4 of core workflow
+### 3. 自我验证
+- 逐项核对规格中的验收标准
+- 记录发现的问题
+- 如果发现问题：
+  - 小问题：直接修复，重新验证
+  - 大问题：通过 `question` 报告，返回核心工作流第 4 步
 
-### 4. User Report
-Use `question` tool to present:
-- Summary of what was built/changed
-- Local URL (e.g., `http://localhost:5173`)
-- Specific areas/features for the user to check
-- Any known limitations or notes
+### 4. 用户报告
+使用 `question` 工具呈现：
+- 构建/更改内容的摘要
+- 本地 URL（例如 `http://localhost:5173`）
+- 需要用户检查的具体区域/功能
+- 任何已知限制或注意事项
 
-### 5. User Acceptance
-- Wait for user to confirm acceptance
-- If user reports issues or requests changes → return to Step 1 of core workflow
-- If user accepts → proceed to Step 6
+### 5. 用户验收
+- 等待用户确认验收
+- 如果用户反馈问题或要求更改 → 返回核心工作流第 1 步
+- 如果用户接受 → 进入第 6 步
 
-## Verification
+## 验证
 
-- [ ] Dev server starts and feature is accessible
-- [ ] Feature matches acceptance criteria
-- [ ] User has been notified via `question`
-- [ ] User has accepted (or issues routed back)
+- [ ] 开发服务器启动且功能可访问
+- [ ] 功能符合验收标准
+- [ ] 已通过 `question` 通知用户
+- [ ] 用户已接受（或问题已返回处理）
