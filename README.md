@@ -30,6 +30,7 @@ copy ~/opencode-vibe/opencode.json %USERPROFILE%\.config\opencode\opencode.jsonc
 opencode /vibe-init  # 首次初始化（技术栈 + 服务器 + Git + 代理）
 opencode /vibe       # 每次会话开始（加载工作流）
 opencode /pr         # 按 PR 推送
+opencode /release    # 发布新版本：版本号 → CHANGELOG → tag → GitHub Release
 ```
 
 已有 opencode 的项目只需将本仓库的 `AGENTS.md` 和 `.opencode/` 目录放入项目根目录即可生效。
@@ -40,6 +41,7 @@ opencode /pr         # 按 PR 推送
 opencode /vibe       # 加载工作流（每次会话第一步）
 opencode /vibe-init  # 项目初始化：技术栈 → 服务器 → Git → 代理
 opencode /pr         # 按 PR 推送：自动分析 diff → 分支 → commit → PR
+opencode /release    # 发布新版本：main 校验 → release 分支 → 版本号/CHANGELOG → 合并 → tag → Release
 ```
 
 ## 使用
@@ -78,7 +80,7 @@ Step 6  兼容性测试         全栈回归，发现问题回 Step 2
     │   └── ...                  database-change, migration, integration,
     │                              security-audit, dependency-update,
     │                              prototype, project-init, compatibility-test
-    ├── commands/                命令（/vibe、/vibe-init、/pr，全局同源）
+    ├── commands/                命令（/vibe、/vibe-init、/pr、/release，全局同源）
     └── prompts/                 自定义提示词（可选）
 ```
 

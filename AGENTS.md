@@ -57,3 +57,8 @@ When vibe-core's workflow tells you to load a scenario-specific skill, use the `
 | `ci-cd` | CI/CD pipeline and Docker configuration |
 | `docs` | Documentation, README, changelog |
 | `architecture` | Architecture decisions and ADRs |
+
+## 网络
+
+代理端口: 7897
+
