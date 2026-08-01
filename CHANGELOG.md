@@ -1,5 +1,19 @@
 # Changelog
 
+## [v3.0.0] - 2026-08-01
+
+### Changed
+- Rebuilt the package as three standard Agent Skills under `.agents/skills/`: `backend`, `frontend`, and `integration`.
+- Migrated the former 55 independently discoverable role skills into 52 internal reference documents and 5 workflow references, loaded by the selected role entry as needed.
+- Replaced OpenCode-specific commands, global installation, role activation, configuration, and runtime tool calls with tool-independent role workflows and reference routing.
+- Renamed test-server environment variable guidance from `OPENCODE_TEST_*` to `TEST_SERVER_*`.
+- Added `scripts/validate-skills.mjs` to verify entry layout, references, frontmatter, and legacy runtime residue.
+- Corrected the frontend inventory: the former role contained 18 skills, not 17.
+
+### Fixed
+- Restored a complete, role-specific `references/workflows/role-flow.md` for backend, frontend, and integration. Each now defines the six-stage flow, approvals, review triggers, loop rules, and delivery checks; PR, integration, and release files remain specialized subflows.
+- Routed every role entry through its `role-flow.md` and replaced active legacy skill-name references with package-relative paths.
+
 ## [v2.0.0] - 2026-07-31
 
 ### 新增
