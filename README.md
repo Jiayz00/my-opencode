@@ -1,55 +1,55 @@
-# Three-Role Agent Skills
+# 三角色 Agent Skills
 
-Standard Agent Skills for three software-delivery roles: `frontend`, `backend`, and `integration`.
+面向三种软件交付角色（`frontend` / `backend` / `integration`）的标准 Agent Skills 包。
 
-The package exposes only three selectable skills. After a role is selected, its entry `SKILL.md` first reads that role's complete `references/workflows/role-flow.md`, then identifies the task and reads only the detailed references needed for that work. The 52 detailed practices are internal references, not independently selectable skills.
+本包仅暴露三个可选择的 Skill。角色选定后，其入口 `SKILL.md` 先读取该角色完整的 `references/workflows/role-flow.md`，再识别任务并只读取该工作所需的详细 references。52 个详细实践均为内部 references，不可独立选择。
 
 ## Skills
 
-| Skill | Use for | Primary outputs |
+| Skill | 适用场景 | 主要产出 |
 |---|---|---|
-| `frontend` | UI, components, state, accessibility, browser validation, frontend documentation | frontend code, `docs/frontend/`, PR to `develop` |
-| `backend` | APIs, data, business logic, authentication, backend testing, backend documentation | backend code, `docs/api-contracts/`, `docs/backend/`, PR to `develop` |
-| `integration` | PR integration, contract reconciliation, end-to-end validation, compatibility, release preparation | integrated `develop`, project docs, `develop` to `main` merge PR |
+| `frontend` | UI、组件、状态、可访问性、浏览器验证、前端文档 | 前端代码、`docs/frontend/`、PR 到 `develop` |
+| `backend` | API、数据、业务逻辑、认证、后端测试、后端文档 | 后端代码、`docs/api-contracts/`、`docs/backend/`、PR 到 `develop` |
+| `integration` | PR 集成、契约对账、端到端验证、兼容性、发布准备 | 集成后的 `develop`、项目文档、`develop` 到 `main` 的 merge PR |
 
-Use your agent tool's native Skill picker or loading mechanism to select one of these names. The Agent Skills standard does not require a particular slash-command spelling, so this repository does not ship tool-specific commands.
+使用所用代理工具原生的 Skill 选择器或加载机制来选择上述名称之一。Agent Skills 标准不要求特定的斜杠命令写法，因此本仓库不附带工具专属命令。
 
-## Workflow
+## 工作流
 
-Each role's `role-flow.md` uses the same six control stages, adapted to its ownership:
+每个角色的 `role-flow.md` 使用相同的六个控制阶段，并根据其职责范围调整：
 
-1. Clarify requirements.
-2. Produce and review a specification or plan.
-3. Obtain explicit approval before writes.
-4. Implement or review a verifiable increment.
-5. Present acceptance evidence and obtain user feedback.
-6. Obtain separate approval before compatibility or regression testing.
+1. 澄清需求。
+2. 产出并评审规格或计划。
+3. 写入前获得明确批准。
+4. 实现或评审一个可验证的增量。
+5. 呈现验收证据并获取用户反馈。
+6. 兼容性或回归测试前单独获得批准。
 
-The role entry provides a task-routing table. `role-flow.md` is the role's complete workflow: stage gates, approval points, review triggers, loop rules, and delivery checklist. Focused files under `references/` provide API design, accessibility, database migration, code review, release preparation, and similar specialized rules. `pr-flow.md`, `integrate-flow.md`, and `release-flow.md` are delivery-stage workflows, not replacements for the role flow.
+角色入口提供任务路由表。`role-flow.md` 是角色的完整工作流：阶段门禁、审批点、评审触发条件、回环规则与交付清单。`references/` 下的聚焦文件提供 API 设计、可访问性、数据库迁移、代码评审、发布准备等专项规则。`pr-flow.md`、`integrate-flow.md`、`release-flow.md` 是交付阶段的子流程，不能替代角色主流程。
 
-## Collaboration Rules
+## 协作规则
 
-- Backend owns API contract baselines. Integration owns final contract reconciliation.
-- Frontend uses the agreed contract and mocks unavailable services; it does not invent backend behavior.
-- Backend and frontend do not merge PRs.
-- Integration may merge approved work into `develop` only after confirmation, conflict handling, and retesting.
-- Release preparation creates a `develop` to `main` merge PR. A human merges `main`.
-- Do not force-push or directly push `develop` or `main`.
+- 后端拥有 API 契约基线；集成角色拥有最终契约对账权。
+- 前端使用已商定的契约，对不可用服务使用 Mock，不自行发明后端行为。
+- 后端与前端不合并 PR。
+- 集成角色只有在确认、冲突处理并重新测试后，才能将已批准的工作合并到 `develop`。
+- 发布准备创建 `develop` 到 `main` 的 merge PR，`main` 由人工合并。
+- 禁止 force-push 或直接 push `develop` 与 `main`。
 
-## Layout
+## 目录结构
 
 ```text
 .agents/
   skills/
     backend/
       SKILL.md
-      references/                 # 18 backend practices + role and PR workflows
+      references/                 # 18 个后端实践 + 角色与 PR 工作流
     frontend/
       SKILL.md
-      references/                 # 17 frontend practices + role and PR workflows
+      references/                 # 17 个前端实践 + 角色与 PR 工作流
     integration/
       SKILL.md
-      references/                 # 17 integration practices + role, integration, PR, and release workflows
+      references/                 # 17 个集成实践 + 角色、集成、PR 与发布工作流
 scripts/
   validate-skills.mjs
 AGENTS.md
@@ -57,17 +57,17 @@ CHANGELOG.md
 LICENSE
 ```
 
-The package contains 3 entry skills, 52 reference documents, 3 role-flow references, and 5 specialized workflow references.
+本包包含 3 个入口 Skill、52 个 reference 文档、3 个 role-flow 与 5 个专项流程 reference。
 
-## Reference Coverage
+## Reference 覆盖范围
 
-- Backend: API design, data migrations, testing, dependencies, migrations, performance, third-party integration, security, reviews, Git and PR workflow.
-- Frontend: design, accessibility, testing, browser acceptance, dependencies, migrations, performance, security, reviews, Git and PR workflow.
-- Integration: contract reconciliation, PR integration, full-stack acceptance, compatibility, CI/CD, release preparation, security, reviews, Git and PR workflow.
+- 后端：API 设计、数据迁移、测试、依赖、性能、三方集成、安全、评审、Git 与 PR 工作流。
+- 前端：设计、可访问性、测试、浏览器验收、依赖、迁移、性能、安全、评审、Git 与 PR 工作流。
+- 集成：契约对账、PR 集成、全栈验收、兼容性、CI/CD、发布准备、安全、评审、Git 与 PR 工作流。
 
-## Test Environment Variables
+## 测试环境变量
 
-Integration references use the following portable names when a test server is needed:
+集成 references 在需要测试服务器时使用以下可移植命名：
 
 ```text
 TEST_SERVER_HOST
@@ -77,22 +77,22 @@ TEST_SERVER_PORT
 TEST_SERVER_DIR
 ```
 
-Keep their values outside the repository. The package's Git workflows treat secrets, private keys, `.env` files, and test-server credentials as blocked content.
+值请保存在仓库之外。本包的 Git 工作流将机密、私钥、`.env` 文件与测试服务器凭据视为被拦截内容。
 
-## Validation
+## 校验
 
-Run after changing package content:
+修改包内容后运行：
 
 ```bash
 node scripts/validate-skills.mjs
 ```
 
-It verifies the three-entry layout, standard frontmatter, reference counts, role and specialized workflow files, and absence of legacy runtime-specific paths, commands, and names.
+它会校验三入口布局、标准 frontmatter、reference 数量、角色与专项工作流文件，以及是否存在遗留运行时专属路径、命令与命名。
 
-## Contributing
+## 参与贡献
 
-1. Keep role ownership and workflow gates intact.
-2. Update the relevant entry routing table when adding or renaming a reference.
-3. Keep references tool-independent: describe user confirmation and optional delegation behavior without binding to a particular agent API.
-4. Run the validation script and inspect `git diff --check`.
-5. Do not commit, push, or create a pull request unless explicitly requested.
+1. 保持角色职责边界与工作流门禁不变。
+2. 新增或重命名 reference 时，更新对应入口的路由表。
+3. 保持 references 工具无关：描述用户确认与可选委派行为，不绑定特定代理 API。
+4. 运行校验脚本并检查 `git diff --check`。
+5. 未经明确要求不得提交、推送或创建拉取请求。
