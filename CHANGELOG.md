@@ -2,17 +2,19 @@
 
 ## [v3.0.0] - 2026-08-01
 
-### Changed
-- Rebuilt the package as three standard Agent Skills under `.agents/skills/`: `backend`, `frontend`, and `integration`.
-- Migrated the former 55 independently discoverable role skills into 52 internal reference documents and 5 workflow references, loaded by the selected role entry as needed.
-- Replaced OpenCode-specific commands, global installation, role activation, configuration, and runtime tool calls with tool-independent role workflows and reference routing.
-- Renamed test-server environment variable guidance from `OPENCODE_TEST_*` to `TEST_SERVER_*`.
-- Added `scripts/validate-skills.mjs` to verify entry layout, references, frontmatter, and legacy runtime residue.
-- Corrected the frontend inventory: the former role contained 18 skills, not 17.
+### 变更
 
-### Fixed
-- Restored a complete, role-specific `references/workflows/role-flow.md` for backend, frontend, and integration. Each now defines the six-stage flow, approvals, review triggers, loop rules, and delivery checks; PR, integration, and release files remain specialized subflows.
-- Routed every role entry through its `role-flow.md` and replaced active legacy skill-name references with package-relative paths.
+- 将包重构为标准 Agent Skills 三入口形式，位于 `.agents/skills/`：`backend`、`frontend`、`integration`
+- 原 55 个可独立发现的角色技能迁移为 52 个内部 reference 文档与 5 个工作流 reference，由所选角色入口按需加载
+- 移除 OpenCode 专属命令、全局安装、角色激活、配置与运行时工具调用，替换为工具无关的角色工作流与 reference 路由
+- 测试服务器环境变量命名由 `OPENCODE_TEST_*` 调整为 `TEST_SERVER_*`
+- 新增 `scripts/validate-skills.mjs`，校验入口布局、references、frontmatter 及遗留运行时残留
+- 修正前端技能清单：原角色包含 18 个技能，而非 17 个
+
+### 修复
+
+- 为 backend、frontend、integration 恢复完整、角色专属的 `references/workflows/role-flow.md`，各自定义六阶段流程、审批、评审触发、回环规则与交付检查；PR、集成与发布文件保持为专项子流程
+- 每个角色入口均路由至其 `role-flow.md`，并将遗留的旧技能名引用替换为包内相对路径
 
 ## [v2.0.0] - 2026-07-31
 
