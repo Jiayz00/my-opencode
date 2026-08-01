@@ -1,113 +1,98 @@
-# Vibe Coding Workflow
+# Three-Role Agent Skills
 
-基于 opencode 的 AI 辅助全栈开发工作流。**三角色协作体系**：前端开发 / 后端开发 / 前后端结合，每个角色拥有独立的 6 步 vibe 工作流（技能、命令、流程文档、AGENTS、权限配置），完全自包含于 `.opencode/roles/<角色>/`。
+Standard Agent Skills for three software-delivery roles: `frontend`, `backend`, and `integration`.
 
-## 部署
+The package exposes only three selectable skills. After a role is selected, its entry `SKILL.md` first reads that role's complete `references/workflows/role-flow.md`, then identifies the task and reads only the detailed references needed for that work. The 52 detailed practices are internal references, not independently selectable skills.
 
-### 全局安装（一次配置，所有项目可用）
+## Skills
+
+| Skill | Use for | Primary outputs |
+|---|---|---|
+| `frontend` | UI, components, state, accessibility, browser validation, frontend documentation | frontend code, `docs/frontend/`, PR to `develop` |
+| `backend` | APIs, data, business logic, authentication, backend testing, backend documentation | backend code, `docs/api-contracts/`, `docs/backend/`, PR to `develop` |
+| `integration` | PR integration, contract reconciliation, end-to-end validation, compatibility, release preparation | integrated `develop`, project docs, `develop` to `main` merge PR |
+
+Use your agent tool's native Skill picker or loading mechanism to select one of these names. The Agent Skills standard does not require a particular slash-command spelling, so this repository does not ship tool-specific commands.
+
+## Workflow
+
+Each role's `role-flow.md` uses the same six control stages, adapted to its ownership:
+
+1. Clarify requirements.
+2. Produce and review a specification or plan.
+3. Obtain explicit approval before writes.
+4. Implement or review a verifiable increment.
+5. Present acceptance evidence and obtain user feedback.
+6. Obtain separate approval before compatibility or regression testing.
+
+The role entry provides a task-routing table. `role-flow.md` is the role's complete workflow: stage gates, approval points, review triggers, loop rules, and delivery checklist. Focused files under `references/` provide API design, accessibility, database migration, code review, release preparation, and similar specialized rules. `pr-flow.md`, `integrate-flow.md`, and `release-flow.md` are delivery-stage workflows, not replacements for the role flow.
+
+## Collaboration Rules
+
+- Backend owns API contract baselines. Integration owns final contract reconciliation.
+- Frontend uses the agreed contract and mocks unavailable services; it does not invent backend behavior.
+- Backend and frontend do not merge PRs.
+- Integration may merge approved work into `develop` only after confirmation, conflict handling, and retesting.
+- Release preparation creates a `develop` to `main` merge PR. A human merges `main`.
+- Do not force-push or directly push `develop` or `main`.
+
+## Layout
+
+```text
+.agents/
+  skills/
+    backend/
+      SKILL.md
+      references/                 # 18 backend practices + role and PR workflows
+    frontend/
+      SKILL.md
+      references/                 # 17 frontend practices + role and PR workflows
+    integration/
+      SKILL.md
+      references/                 # 17 integration practices + role, integration, PR, and release workflows
+scripts/
+  validate-skills.mjs
+AGENTS.md
+CHANGELOG.md
+LICENSE
+```
+
+The package contains 3 entry skills, 52 reference documents, 3 role-flow references, and 5 specialized workflow references.
+
+## Reference Coverage
+
+- Backend: API design, data migrations, testing, dependencies, migrations, performance, third-party integration, security, reviews, Git and PR workflow.
+- Frontend: design, accessibility, testing, browser acceptance, dependencies, migrations, performance, security, reviews, Git and PR workflow.
+- Integration: contract reconciliation, PR integration, full-stack acceptance, compatibility, CI/CD, release preparation, security, reviews, Git and PR workflow.
+
+## Test Environment Variables
+
+Integration references use the following portable names when a test server is needed:
+
+```text
+TEST_SERVER_HOST
+TEST_SERVER_USER
+TEST_SERVER_KEY
+TEST_SERVER_PORT
+TEST_SERVER_DIR
+```
+
+Keep their values outside the repository. The package's Git workflows treat secrets, private keys, `.env` files, and test-server credentials as blocked content.
+
+## Validation
+
+Run after changing package content:
 
 ```bash
-# 1. 克隆仓库
-git clone <repo-url> ~/opencode-vibe
-
-# 2. 安装角色工作流到全局（frontend / backend / integration 三选一）
-cd ~/opencode-vibe
-opencode /vibe-role <frontend|backend|integration>
+node scripts/validate-skills.mjs
 ```
 
-`/vibe-role` 会将对应角色的 `skills/`、`commands/`、`docs/`、`AGENTS.md` 安装到全局 `~/.config/opencode/` 并合并技能权限（写入全局前会 `question` 确认并备份配置）。
+It verifies the three-entry layout, standard frontmatter, reference counts, role and specialized workflow files, and absence of legacy runtime-specific paths, commands, and names.
 
-- 三人各用一台机器：每台机器运行一次安装自己的角色
-- 单机切换角色：重新运行 `/vibe-role` 选择另一角色
+## Contributing
 
-### 项目使用
-
-```bash
-opencode /vibe       # 每次会话开始（加载当前激活角色的 6 步工作流）
-opencode /pr         # 按 PR 推送（base 按角色固定 develop 或 main）
-opencode /integrate  # 仅结合角色：合并 PR 到 develop
-opencode /release    # 仅结合角色：发布版本
-```
-
-## 三角色协作
-
-| 角色 | 文件夹 | 职责 | 分支 | PR 目标 | 合并 |
-|------|--------|------|------|---------|------|
-| 前端开发 | `.opencode/roles/frontend/` | 只做前端：UI、组件、状态管理；契约驱动 + Mock | `feat/frontend/*` | develop（固定） | 不合并 |
-| 后端开发 | `.opencode/roles/backend/` | 只做后端：API、数据库、业务逻辑；规格阶段产出 API 契约 | `feat/backend/*` | develop（固定） | 不合并 |
-| 前后端结合 | `.opencode/roles/integration/` | 处理 PR、合并 develop、接口适配、全栈验收与兼容性测试、项目文档 | `feat/integration/*` 或 develop | main（merge PR，人工 merge） | 唯一可合并 develop；合 main 只提交 PR |
-
-**GitHub 流程（强制）：**
-- 前端/后端开发人员只提交 PR（base=develop），**不合并**
-- 结合人员：合并 PR→develop（question 确认 + 冲突处理 + 合并后重测）→ 接口适配 → 全栈验证 → **提交 develop→main 的 merge PR（base=main），merge 由人工在 GitHub 手动点击执行**，禁止直接 push main
-
-**文档目录：** 前端 `docs/frontend/`、后端 `docs/backend/`、契约 `docs/api-contracts/`、项目级 `README.md` + `docs/`
-
-## 命令
-
-| 命令 | 角色 | 用途 |
-|------|------|------|
-| `/vibe-role <角色>` | 所有 | 安装/切换角色工作流到全局（唯一全局写入入口，需确认） |
-| `/vibe` | 所有 | 加载当前角色 6 步工作流（每次会话第一步） |
-| `/pr` | 前端/后端 | 提交 PR（base=develop，不合并） |
-| `/pr` | 结合 | 提交 develop→main 的 merge PR（base=main，人工 merge） |
-| `/integrate` | 结合 | 合并 PR 到 develop（确认 + 冲突处理 + 重测） |
-| `/release` | 结合 | 发布版本（release 分支 → 合并 → tag → Release） |
-
-## 使用
-
-每次新会话先执行 `/vibe`，工作流 6 步自动引导：
-
-```
-Step 1  需求澄清          使用 question 工具澄清需求
-Step 2  规格与计划         文档 + 多角色评审（子代理 + 思想评审）
-Step 3  权限门禁           问你是否可以开始（未经许可不写代码）
-Step 4  开发与评审         编码 → 评审 → 验证（小修直接改，需调整方案回 Step 2）
-Step 5  验收测试           本地测试套件 → 你确认（未过回 Step 4/2）
-Step 6  兼容性测试         回归，发现问题回 Step 2
-```
-
-## 结构
-
-```
-├── AGENTS.md                    项目级规则入口（三角色协作说明）
-├── opencode.json                配置（最小权限集）
-└── .opencode/
-    ├── commands/                /vibe-role 命令
-    ├── docs/                    role-flow.md（角色安装/切换流程）
-    └── roles/
-        ├── frontend/            前端角色（17 技能 + 命令 + pr-flow + AGENTS + opencode.jsonc）
-        │   ├── skills/          vibe-core, feature-dev-frontend, frontend-philosophy,
-        │   │                    design-frontend, testing-frontend, accessibility-frontend,
-        │   │                    optimization-frontend, acceptance-frontend, bugfix,
-        │   │                    refactoring, git-workflow, docs, dependency-update,
-        │   │                    migration-frontend, prototype, review-frontend-arch,
-        │   │                    review-qa, security-audit
-        │   ├── commands/        /vibe、/pr
-        │   └── docs/            pr-flow.md
-        ├── backend/             后端角色（19 技能 + 命令 + pr-flow + AGENTS + opencode.jsonc）
-        │   ├── skills/          vibe-core, feature-dev-backend, backend-philosophy,
-        │   │                    api-design-backend, testing-backend, database-change,
-        │   │                    optimization-backend, dependency-update, migration-backend,
-        │   │                    integration, prototype, bugfix, refactoring, git-workflow,
-        │   │                    docs, review-backend-arch, review-qa, review-devops,
-        │   │                    security-audit
-        │   ├── commands/        /vibe、/pr
-        │   └── docs/            pr-flow.md
-        └── integration/         结合角色（18 技能 + 命令 + 流程文档 + AGENTS + opencode.jsonc）
-            ├── skills/          vibe-core, feature-dev-integration, integration-philosophy,
-            │                    api-contract-integration, acceptance-fullstack,
-            │                    compatibility-test, bugfix, refactoring, git-workflow, docs,
-            │                    dependency-update, ci-cd, code-review, review-frontend-arch,
-            │                    review-backend-arch, review-devops, review-qa, security-audit
-            ├── commands/        /vibe、/pr、/integrate、/release
-            └── docs/            pr-flow.md、integrate-flow.md、release-flow.md
-```
-
-## 规则
-
-- **不跳过步骤、不假设需求、不省略验证**——"看起来对"不算对，要实测
-- 服务器凭据走 SSH config alias 或环境变量，不写入项目文件
-- commit 类型：`feat / fix / hotfix / refactor / perf / chore / release`
-- commit 信息中文，PR 只创建不合并（结合人员负责合并）
-- 全局同步（`/vibe-role`）仅在你明确要求后执行
+1. Keep role ownership and workflow gates intact.
+2. Update the relevant entry routing table when adding or renaming a reference.
+3. Keep references tool-independent: describe user confirmation and optional delegation behavior without binding to a particular agent API.
+4. Run the validation script and inspect `git diff --check`.
+5. Do not commit, push, or create a pull request unless explicitly requested.
